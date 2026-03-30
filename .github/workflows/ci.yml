@@ -27,7 +27,7 @@ jobs:
     steps:
       # Step 1: Check out the code
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Step 2: Set up Java (uses the matrix version)
       - name: Set up JDK ${{ matrix.java-version }}
