@@ -1,0 +1,88 @@
+# ================================
+# Bug Report Issue Template (YAML Form)
+# ================================
+# This uses GitHub's newer YAML-based issue forms (not old Markdown templates).
+# Users get a structured form with dropdowns, text areas, and checkboxes.
+
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Bug Summary
+      description: A brief one-line summary of the bug.
+      placeholder: "e.g., Task creation returns 500 error"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Send POST to /api/tasks with body {...}
+        2. Observe the response
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Low - Cosmetic issue
+        - Medium - Feature works but with issues
+        - High - Feature is broken
+        - Critical - App crashes or data loss
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Your environment details
+      placeholder: |
+        - OS: Windows 11
+        - Java: 21
+        - Browser: Chrome 120 (if applicable)
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues for duplicates
+          required: true
+        - label: I have provided steps to reproduce
+          required: true

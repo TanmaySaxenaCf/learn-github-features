@@ -1,0 +1,15 @@
+# ================================
+# Issue Template Chooser Config
+# ================================
+# This file configures the issue template chooser page.
+# Users see this when they click "New Issue" on your repo.
+
+blank_issues_enabled: false           # Disable blank issues (force using templates)
+
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/TanmaySaxenaCf/learn-github-features/discussions
+    about: Ask questions and share ideas in Discussions instead of opening an issue.
+  - name: 📖 Documentation
+    url: https://github.com/TanmaySaxenaCf/learn-github-features/wiki
+    about: Check the wiki for documentation before opening an issue.

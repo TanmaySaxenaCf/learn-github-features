@@ -1,0 +1,55 @@
+# ==========================
+# GitHub Actions CI Workflow
+# ==========================
+# This workflow runs on every push and pull request to build and test the app.
+# It demonstrates: triggers, jobs, steps, caching, and test reporting.
+
+name: CI - Build & Test
+
+# TRIGGERS: When does this workflow run?
+on:
+  push:
+    branches: [ main, develop ]        # Runs on pushes to main and develop
+  pull_request:
+    branches: [ main ]                 # Runs on PRs targeting main
+
+# JOBS: What work does this workflow do?
+jobs:
+  build-and-test:
+    name: Build & Test (Java ${{ matrix.java-version }})
+    runs-on: ubuntu-latest
+
+    # MATRIX: Test against multiple Java versions
+    strategy:
+      matrix:
+        java-version: [21]
+
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java (uses the matrix version)
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'              # Caches Maven dependencies for faster builds
+
+      # Step 3: Build the project (skip tests for now)
+      - name: Build with Maven
+        run: mvn compile --batch-mode --no-transfer-progress
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: mvn test --batch-mode --no-transfer-progress
+
+      # Step 5: Upload test results as an artifact
+      - name: Upload test results
+        if: always()                  # Runs even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-java-${{ matrix.java-version }}
+          path: target/surefire-reports/
+          retention-days: 7

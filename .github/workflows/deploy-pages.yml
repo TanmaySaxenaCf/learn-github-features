@@ -1,0 +1,55 @@
+# ================================
+# GitHub Pages Deployment Workflow
+# ================================
+# This workflow deploys static files from the docs/ folder to GitHub Pages.
+# It demonstrates: manual triggers, permissions, environment deployments.
+
+name: Deploy to GitHub Pages
+
+# TRIGGERS: Runs on push to main OR manually via the Actions tab
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'                     # Only runs when docs/ files change
+  workflow_dispatch:                   # Allows manual trigger from GitHub UI
+
+# PERMISSIONS: Required for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent multiple deployments at the same time
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Pages
+    runs-on: ubuntu-latest
+
+    # ENVIRONMENT: Links this job to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Configure GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Upload the docs/ folder as a Pages artifact
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

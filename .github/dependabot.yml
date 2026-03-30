@@ -1,0 +1,32 @@
+# ================================
+# Dependabot Configuration
+# ================================
+# Dependabot automatically creates PRs to update your dependencies.
+# This keeps your project secure and up to date.
+
+version: 2
+
+updates:
+  # Check for Maven dependency updates
+  - package-ecosystem: "maven"
+    directory: "/"                     # Location of pom.xml
+    schedule:
+      interval: "weekly"              # Check weekly (daily, weekly, or monthly)
+      day: "monday"
+    open-pull-requests-limit: 5       # Max 5 open Dependabot PRs at a time
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "deps"                  # Commit messages like "deps: bump spring-boot..."
+
+  # Check for GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "ci"

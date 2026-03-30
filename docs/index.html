@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager — API Documentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>📋 Task Manager API</h1>
+        <p>A Spring Boot REST API for managing tasks</p>
+    </header>
+
+    <main>
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>
+                The Task Manager API provides a simple CRUD interface for managing tasks.
+                It uses an in-memory H2 database, so data resets on each restart.
+            </p>
+            <p>
+                This page is hosted on <strong>GitHub Pages</strong> — deployed automatically
+                via <a href="https://github.com/TanmaySaxenaCf/learn-github-features/actions">GitHub Actions</a>
+                whenever files in <code>docs/</code> change.
+            </p>
+        </section>
+
+        <section id="endpoints">
+            <h2>API Endpoints</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><code>/api/tasks</code></td>
+                        <td>List all tasks</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><code>/api/tasks/{id}</code></td>
+                        <td>Get a specific task</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><code>/api/tasks/status/{status}</code></td>
+                        <td>Filter by status</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><code>/api/tasks</code></td>
+                        <td>Create a new task</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><code>/api/tasks/{id}</code></td>
+                        <td>Update a task</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><code>/api/tasks/{id}</code></td>
+                        <td>Delete a task</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="example">
+            <h2>Example Request</h2>
+            <pre><code>curl -X POST http://localhost:8080/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Learn GitHub Features",
+    "description": "Explore Actions, Pages, Wiki, and more",
+    "status": "TODO"
+  }'</code></pre>
+
+            <h3>Response</h3>
+            <pre><code>{
+  "id": 1,
+  "title": "Learn GitHub Features",
+  "description": "Explore Actions, Pages, Wiki, and more",
+  "status": "TODO",
+  "createdAt": "2026-03-30T10:00:00",
+  "updatedAt": "2026-03-30T10:00:00"
+}</code></pre>
+        </section>
+
+        <section id="task-model">
+            <h2>Task Model</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>id</td><td>Long</td><td>Auto-generated ID</td></tr>
+                    <tr><td>title</td><td>String</td><td>Required, max 200 chars</td></tr>
+                    <tr><td>description</td><td>String</td><td>Optional, max 1000 chars</td></tr>
+                    <tr><td>status</td><td>Enum</td><td>TODO, IN_PROGRESS, or DONE</td></tr>
+                    <tr><td>createdAt</td><td>DateTime</td><td>Auto-set on creation</td></tr>
+                    <tr><td>updatedAt</td><td>DateTime</td><td>Auto-updated on changes</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>
+            Built with ❤️ to learn GitHub features |
+            <a href="https://github.com/TanmaySaxenaCf/learn-github-features">View on GitHub</a>
+        </p>
+    </footer>
+</body>
+</html>
