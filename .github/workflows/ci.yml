@@ -48,7 +48,7 @@ jobs:
       # Step 5: Upload test results as an artifact
       - name: Upload test results
         if: always()                  # Runs even if tests fail
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-java-${{ matrix.java-version }}
           path: target/surefire-reports/
