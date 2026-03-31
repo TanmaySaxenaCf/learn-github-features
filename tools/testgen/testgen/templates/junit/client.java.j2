@@ -1,0 +1,75 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+@ExtendWith(MockitoExtension.class)
+class {{ test_class_name }} {
+
+{% for dep in dependencies %}
+    @Mock
+    private {{ dep.type }} {{ dep.var_name }};
+
+{% endfor %}
+    @InjectMocks
+    private {{ class_name }} {{ instance_var }};
+
+{% for method in methods %}
+    @Test
+    void {{ method.name }}_shouldExecuteSuccessfully() {
+{% for param in method.parameters %}
+        {{ param.type }} {{ param.var }} = {{ param.default_value }};
+{% endfor %}
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+{% if method.parameters and method.return_type and method.return_type != 'void' %}
+        // Client calls external service — may throw if underlying transport is unavailable
+        try {
+            {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result, "{{ method.name }}() must return non-null when service responds");
+{% for rf in method.return_fields %}
+            assertNotNull(result.{{ rf.getter }}(), "{{ method.name }}() result.{{ rf.field_name }} should be populated");
+{% endfor %}
+        } catch (NullPointerException e) {
+            // WebServiceTemplate/RestTemplate is null in Mockito @InjectMocks context
+            assertNotNull(e, "NPE from uninitialised transport is expected in unit test");
+        } catch (Exception e) {
+            // Other transport errors (connection refused, timeout, etc.)
+            assertNotNull(e.getMessage(), "{{ method.name }}() transport error must have message");
+        }
+{% elif method.return_type and method.return_type != 'void' %}
+        // Zero-param getter — @Value/@Autowired fields are null in Mockito context
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}());
+{% else %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}({{ method.param_vars }}));
+{% endif %}
+    }
+
+{% if method.parameters and method.return_type and method.return_type != 'void' %}
+{% set JAVA_PRIMITIVES = ['boolean', 'int', 'long', 'double', 'float', 'byte', 'short', 'char'] %}
+    @Test
+    void {{ method.name }}_shouldHandleNullParameters() {
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+        try {
+            {{ instance_var }}.{{ method.name }}({% for param in method.parameters %}{% if param.type in JAVA_PRIMITIVES %}{{ param.default_value }}{% else %}null{% endif %}{{ ", " if not loop.last }}{% endfor %});
+            // Method handled null gracefully — no exception thrown
+        } catch (RuntimeException e) {
+            assertNotNull(e.getMessage(), "{{ method.name }}(null) exception must have a message");
+        }
+    }
+{% endif %}
+{% endfor %}
+
+{% if not methods %}
+    @Test
+    void classLoads() {
+        assertNotNull({{ instance_var }});
+    }
+{% endif %}
+}

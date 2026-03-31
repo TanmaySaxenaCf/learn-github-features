@@ -1,0 +1,68 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+class {{ test_class_name }} {
+
+{% if class_kind != "CONSTANTS" %}
+    @Test
+    void shouldInstantiateWithNoArgs() {
+        {{ class_name }} instance = new {{ class_name }}();
+        assertNotNull(instance);
+    }
+
+{% for method in methods %}
+{% if method.name.startswith("set") and method.parameters %}
+{% set getter = method.name | replace("set", "get", 1) %}
+{% set param = method.parameters[0] %}
+    @Test
+    void {{ method.name }}_shouldStoreAndReturnValue() throws Exception {
+        {{ class_name }} instance = new {{ class_name }}();
+        {{ param.type }} expected = {{ param.default_value }};
+        instance.{{ method.name }}(expected);
+{% if param.type in ('int', 'long', 'double', 'float', 'short', 'byte', 'boolean', 'char') %}
+        assertEquals(expected, instance.{{ getter }}(),
+            "{{ getter }}() must return the value set via {{ method.name }}()");
+{% else %}
+        assertSame(expected, instance.{{ getter }}(),
+            "{{ getter }}() must return the exact object set via {{ method.name }}()");
+{% endif %}
+    }
+
+{% elif method.name.startswith("get") or method.name.startswith("is") %}
+    @Test
+    void {{ method.name }}_shouldReturnDefaultOnNewInstance() {
+        {{ class_name }} instance = new {{ class_name }}();
+{% if method.return_type in ('int', 'long', 'short', 'byte') %}
+        assertEquals(0, instance.{{ method.name }}());
+{% elif method.return_type == 'boolean' %}
+        assertFalse(instance.{{ method.name }}());
+{% elif method.return_type in ('double', 'float') %}
+        assertEquals(0.0, instance.{{ method.name }}(), 0.001);
+{% else %}
+        assertNull(instance.{{ method.name }}(),
+            "{{ method.name }}() should be null on a default-constructed instance");
+{% endif %}
+    }
+
+{% elif not method.name.startswith("set") %}
+    @Test
+    void {{ method.name }}_shouldExecuteWithoutException() {
+        {{ class_name }} instance = new {{ class_name }}();
+        assertDoesNotThrow(() -> instance.{{ method.name }}({{ method.param_vars }}));
+    }
+
+{% endif %}
+{% endfor %}
+{% else %}
+    @Test
+    void constantsShouldBeDefined() {
+        // Verify constants class is accessible
+        assertDoesNotThrow(() -> Class.forName("{{ class_fqcn }}"));
+    }
+{% endif %}
+}

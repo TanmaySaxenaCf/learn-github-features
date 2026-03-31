@@ -1,0 +1,56 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+@WebMvcTest({{ class_name }}.class)
+class {{ test_class_name }} {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+{% for dep in mock_bean_deps %}
+    @MockBean
+    private {{ dep.type }} {{ dep.var_name }};
+
+{% endfor %}
+{% for em in endpoint_methods %}
+    @Test
+    void {{ em.method_name }}_shouldReturn200_whenValidRequest() throws Exception {
+        mockMvc.perform({{ em.http_method }}("{{ em.path }}")
+                .contentType({% if em.is_xml %}MediaType.APPLICATION_XML{% else %}MediaType.APPLICATION_JSON{% endif %})
+                .content({% if em.is_xml %}"<request/>"{% else %}"{}"{% endif %}))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void {{ em.method_name }}_shouldRejectEmptyBody() throws Exception {
+        mockMvc.perform({{ em.http_method }}("{{ em.path }}")
+                .contentType({% if em.is_xml %}MediaType.APPLICATION_XML{% else %}MediaType.APPLICATION_JSON{% endif %})
+                .content(""))
+                .andExpect(result -> assertTrue(
+                    result.getResponse().getStatus() >= 400,
+                    "Empty body should return error status, got " + result.getResponse().getStatus()));
+    }
+
+{% if mock_bean_deps %}
+    @Test
+    void {{ em.method_name }}_shouldHandle_whenServiceThrowsException() throws Exception {
+{% for dep in mock_bean_deps %}
+{% set mock = methods[loop.index0].mock_target if methods|length > loop.index0 else None %}
+{% if mock %}
+        when({{ mock.var }}.{{ mock.method }}(any())).thenThrow(new RuntimeException("service error"));
+{% endif %}
+{% endfor %}
+        mockMvc.perform({{ em.http_method }}("{{ em.path }}")
+                .contentType({% if em.is_xml %}MediaType.APPLICATION_XML{% else %}MediaType.APPLICATION_JSON{% endif %})
+                .content({% if em.is_xml %}"<request/>"{% else %}"{}"{% endif %}))
+                .andExpect(status().is5xxServerError());
+    }
+{% endif %}
+
+{% endfor %}
+}

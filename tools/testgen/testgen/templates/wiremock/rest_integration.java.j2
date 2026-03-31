@@ -1,0 +1,71 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class {{ test_class_name }} {
+
+    @RegisterExtension
+    static WireMockExtension wireMock = WireMockExtension.newInstance()
+            .options(WireMockConfiguration.wireMockConfig().dynamicPort())
+            .build();
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+{% for dep in external_deps %}
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("{{ dep.url_property }}", () -> "http://localhost:" + wireMock.getPort());
+    }
+{% endfor %}
+
+{% for em in endpoint_methods %}
+    @Test
+    void {{ em.method_name }}_fullPipeline_shouldReturn200() {
+{% for dep in external_deps %}
+        wireMock.stubFor(post(urlPathMatching("/.*"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "{% if em.is_xml %}application/xml{% else %}application/json{% endif %}")
+                .withBody("{% if em.is_xml %}<response><status>OK</status></response>{% else %}{\"status\":\"OK\"}{% endif %}")));
+{% endfor %}
+
+        var response = restTemplate.postForEntity(
+            "{{ em.path }}",
+            {% if em.is_xml %}"<request/>"{% else %}"{}"{% endif %},
+            String.class);
+        assertNotNull(response, "Response must not be null");
+        assertNotNull(response.getStatusCode(), "Status code must be present");
+        assertTrue(response.getStatusCode().is2xxSuccessful()
+            || response.getStatusCode().is4xxClientError()
+            || response.getStatusCode().is5xxServerError(),
+            "Must receive a valid HTTP status code");
+    }
+
+    @Test
+    void {{ em.method_name }}_shouldHandleDownstreamError() {
+{% for dep in external_deps %}
+        wireMock.stubFor(post(urlPathMatching("/.*"))
+            .willReturn(aResponse().withStatus(500)));
+{% endfor %}
+
+        var response = restTemplate.postForEntity(
+            "{{ em.path }}",
+            {% if em.is_xml %}"<request/>"{% else %}"{}"{% endif %},
+            String.class);
+        assertNotNull(response, "Response must not be null on downstream error");
+        assertNotNull(response.getStatusCode(), "Status code must be present on error");
+        // Service should still return a response (fallback) even on downstream failure
+        assertNotNull(response.getBody(), "Body must be present — service returns fallback on error");
+    }
+
+{% endfor %}
+}

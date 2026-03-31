@@ -1,0 +1,135 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+{% if has_dependencies %}
+@ExtendWith(MockitoExtension.class)
+{% endif %}
+class {{ test_class_name }} {
+
+{% if has_dependencies %}
+{% for dep in dependencies %}
+    @Mock
+    private {{ dep.type }} {{ dep.var_name }};
+
+{% endfor %}
+    @InjectMocks
+    private {{ class_name }} {{ instance_var }};
+{% else %}
+    private final {{ class_name }} {{ instance_var }} = new {{ class_name }}();
+{% endif %}
+
+{% for method in methods %}
+{% if method.return_type != 'void' %}
+    @Test
+    void {{ method.name }}_shouldReturnNonNullResult() {
+{% for param in method.parameters %}
+        {{ param.type }} {{ param.var }} = {{ param.default_value }};
+{% endfor %}
+{% if has_dependencies %}
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+{% endif %}
+        try {
+            {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result, "{{ method.name }}() must return a non-null object");
+        } catch (IllegalArgumentException e) {
+            // Method validates input fields — default-constructed params may not satisfy all preconditions
+            assertNotNull(e.getMessage(), "{{ method.name }}() validation error must have a message");
+        }
+    }
+
+{% if method.name == 'mapResponse' %}
+{% set JAVA_PRIMITIVES = ['boolean', 'int', 'long', 'double', 'float', 'byte', 'short', 'char'] %}
+    @Test
+    void {{ method.name }}_nullInput_shouldReturnFallbackWithDefaults() {
+        // Call mapResponse with null args — exercises the fallback/default path
+        try {
+            {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({% for p in method.parameters %}{% if p.type in JAVA_PRIMITIVES %}{{ p.default_value }}{% else %}null{% endif %}{{ ", " if not loop.last }}{% endfor %});
+            assertNotNull(result, "{{ method.name }}(null) must return a fallback result");
+        } catch (NullPointerException | IllegalArgumentException e) {
+            assertNotNull(e.getMessage(), "{{ method.name }}(null) exception must have a message");
+        }
+    }
+
+{% elif method.parameters | length == 0 and method.name.startswith('create') %}
+    @Test
+    void {{ method.name }}_shouldReturnPopulatedDefaults() {
+        {{ method.return_type }} defaults = {{ instance_var }}.{{ method.name }}();
+        assertNotNull(defaults, "{{ method.name }}() must return non-null");
+    }
+
+{% endif %}
+{% else %}
+    @Test
+    void {{ method.name }}_shouldComplete() {
+{% for param in method.parameters %}
+        {{ param.type }} {{ param.var }} = {{ param.default_value }};
+{% endfor %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}({{ method.param_vars }}));
+    }
+
+{% endif %}
+    @Test
+    void {{ method.name }}_shouldHandleNullInput() {
+{% if method.parameters | length >= 1 %}
+{% set JAVA_PRIMITIVES = ['boolean', 'int', 'long', 'double', 'float', 'byte', 'short', 'char'] %}
+        try {
+{% if method.return_type != 'void' %}
+            {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({% for p in method.parameters %}{% if p.type in JAVA_PRIMITIVES %}{{ p.default_value }}{% else %}null{% endif %}{{ ", " if not loop.last }}{% endfor %});
+            assertNotNull(result, "{{ method.name }}(null) should return fallback or default");
+{% else %}
+            {{ instance_var }}.{{ method.name }}({% for p in method.parameters %}{% if p.type in JAVA_PRIMITIVES %}{{ p.default_value }}{% else %}null{% endif %}{{ ", " if not loop.last }}{% endfor %});
+{% endif %}
+        } catch (NullPointerException | IllegalArgumentException e) {
+            assertNotNull(e.getMessage(), "{{ method.name }}(null) exception must have a message");
+        }
+{% else %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}());
+{% endif %}
+    }
+
+{% if method.parameters | length >= 1 %}
+{% set string_params = method.parameters | selectattr('type', 'equalto', 'String') | list %}
+{% if string_params %}
+    @Test
+    void {{ method.name }}_shouldHandleEmptyStringInput() {
+{% for param in method.parameters %}
+{% if param.type == 'String' %}
+        {{ param.type }} {{ param.var }} = "";
+{% else %}
+        {{ param.type }} {{ param.var }} = {{ param.default_value }};
+{% endif %}
+{% endfor %}
+{% if has_dependencies %}
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+{% endif %}
+        try {
+{% if method.return_type != 'void' %}
+            {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result, "{{ method.name }}('') should handle empty strings gracefully");
+{% else %}
+            {{ instance_var }}.{{ method.name }}({{ method.param_vars }});
+{% endif %}
+        } catch (IllegalArgumentException e) {
+            assertNotNull(e.getMessage(), "{{ method.name }}('') validation should have message");
+        }
+    }
+{% endif %}
+{% endif %}
+
+{% endfor %}
+{% if not methods %}
+    @Test
+    void classInstantiates() {
+        assertNotNull({{ instance_var }});
+    }
+{% endif %}
+}

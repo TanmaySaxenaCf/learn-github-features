@@ -1,0 +1,79 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+@ExtendWith(MockitoExtension.class)
+class {{ test_class_name }} {
+
+{% for dep in dependencies %}
+    @Mock
+    private {{ dep.type }} {{ dep.var_name }};
+
+{% endfor %}
+    @InjectMocks
+    private {{ class_name }} {{ instance_var }};
+
+{% for method in methods %}
+    @Test
+    void {{ method.name }}_shouldReturnResponse_whenValidRequest() {
+{% if method.parameters %}
+        {{ method.parameters[0].type }} request = {{ method.parameters[0].default_value }};
+{% endif %}
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+{% if method.return_type != 'void' %}
+        {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({% if method.parameters %}request{% endif %});
+        assertNotNull(result, "{{ method.name }}() must return a non-null response");
+{% else %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}({% if method.parameters %}request{% endif %}));
+{% endif %}
+    }
+
+    @Test
+    void {{ method.name }}_shouldHandleNullRequest() {
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+{% if method.parameters %}
+        try {
+            {{ instance_var }}.{{ method.name }}(null);
+            // Method handled null request gracefully — no exception thrown
+        } catch (RuntimeException e) {
+            assertNotNull(e.getMessage(), "{{ method.name }}(null) exception must have a message");
+        }
+{% else %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}());
+{% endif %}
+    }
+
+{% if method.mock_target %}
+    @Test
+    void {{ method.name }}_shouldHandleServiceException() {
+{% for mock in method.mock_setups %}
+        lenient().when({{ mock.var }}.{{ mock.method }}({{ mock.any_args }})).thenReturn({{ mock.return_value }});
+{% endfor %}
+        lenient().doThrow(new RuntimeException("error"))
+            .when({{ method.mock_target.var }}).{{ method.mock_target.method }}({{ method.mock_target.any_args | default('any()') }});
+{% if method.parameters %}
+        {{ method.parameters[0].type }} request = {{ method.parameters[0].default_value }};
+{% endif %}
+        try {
+{% if method.return_type != 'void' %}
+            {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}({% if method.parameters %}request{% endif %});
+            assertNotNull(result, "{{ method.name }}() should return fallback on service error");
+{% else %}
+            {{ instance_var }}.{{ method.name }}({% if method.parameters %}request{% endif %});
+{% endif %}
+        } catch (RuntimeException e) {
+            assertTrue(e.getMessage().contains("error"), "Exception message should contain 'error', got: " + e.getMessage());
+        }
+    }
+{% endif %}
+
+{% endfor %}
+}

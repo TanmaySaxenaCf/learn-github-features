@@ -1,0 +1,70 @@
+# Testing Automation Framework Configuration
+# This file defines default settings. Override via CLI arguments.
+
+# Framework settings
+framework:
+  # Generated test package suffix (appended to base package)
+  generated_package_suffix: "autotest"
+  # Naming convention for generated test classes
+  test_class_suffix: "AutoTest"
+  # Backup existing generated tests before regeneration
+  backup_before_regenerate: true
+
+# JUnit settings
+junit:
+  enabled: true
+  # Generate tests for these component types
+  components:
+    endpoints: true
+    services: true
+    processors: true
+    models: true
+    exceptions: true
+    clients: true
+    configurations: true
+  # Package prefixes to exclude from generation (e.g., JAXB generated models)
+  # Example: ["com.example.generated.v1"]
+  exclude_packages: []
+
+# WireMock Integration Test settings
+wiremock:
+  enabled: true
+  # WireMock server port (0 = random)
+  port: 0
+
+# Postman Collection settings
+postman:
+  enabled: true
+  # Default base URL variable name
+  base_url_variable: "base_url"
+  # Default base URL value
+  default_base_url: "http://localhost:8080"
+
+# Reporting settings
+reporting:
+  format: "md"
+  output_dir: "reports"
+
+# Maven settings
+maven:
+  command: "mvn"
+  # Additional Maven arguments
+  extra_args: "-q"
+  # Skip running tests (generation only)
+  skip_run: false
+
+# Behavioral Testing settings (v2.1)
+behavioral:
+  enabled: true
+  # Path to reverse-engineering documents (override via --re-docs CLI flag)
+  re_docs_path: ""
+  # Path to legacy JBoss Fuse project (optional, override via --legacy-path)
+  legacy_path: ""
+  # Generate PayloadFactory.java from XSD schemas
+  generate_payload_factory: true
+  # Business rule categories to generate tests for
+  categories:
+    - "Data Transformation"
+    - "Error Handling"
+    - "Data Validation"
+    - "Transaction Logging"

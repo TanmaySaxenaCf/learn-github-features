@@ -1,0 +1,100 @@
+{
+  "info": {
+    "_postman_id": "{{ collection_id }}",
+    "name": "{{ collection_name }}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+{% for ep in rest_endpoints %}
+    {
+      "name": "REST — {{ ep.class_name }}",
+      "item": [
+{% for em in ep.methods %}
+        {
+          "name": "{{ em.method_name }}",
+          "request": {
+            "method": "{{ em.http_method | upper }}",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{% if em.is_xml %}application/xml{% else %}application/json{% endif %}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{% if em.is_xml %}<request/>{% else %}{}{% endif %}"
+            },
+            "url": {
+              "raw": "{% raw %}{{{% endraw %}{{ base_url_variable }}{% raw %}}}{% endraw %}{{ em.path }}",
+              "host": ["{% raw %}{{{% endraw %}{{ base_url_variable }}{% raw %}}}{% endraw %}"],
+              "path": {{ em.path.strip("/").split("/") | tojson }}
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response time < 5000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+      ]
+    }{% if soap_endpoints %},{% endif %}
+
+{% endfor %}
+{% for ep in soap_endpoints %}
+    {
+      "name": "SOAP — {{ ep.class_name }}",
+      "item": [
+{% for em in ep.methods %}
+        {
+          "name": "{{ em.operation_name or em.method_name }}",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "text/xml"},
+              {"key": "SOAPAction", "value": "{{ em.operation_name or em.method_name }}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><{{ em.operation_name or em.method_name }}/></soap:Body></soap:Envelope>"
+            },
+            "url": {
+              "raw": "{% raw %}{{{% endraw %}{{ base_url_variable }}{% raw %}}}{% endraw %}{{ ep.base_path }}",
+              "host": ["{% raw %}{{{% endraw %}{{ base_url_variable }}{% raw %}}}{% endraw %}"],
+              "path": {{ ep.base_path.strip("/").split("/") | tojson }}
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+  ]
+}

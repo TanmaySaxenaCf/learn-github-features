@@ -1,0 +1,233 @@
+# ============================================================
+# RE/FE Pipeline — PR Validation Workflow
+# ============================================================
+# Runs on PRs created by the RE/FE pipeline to validate:
+# 1. All 10 RE documents are present and non-empty
+# 2. Forward-engineered code exists
+# 3. Project compiles
+# 4. All tests pass (existing + new contract + testgen-generated)
+# 5. testgen report exists
+
+name: "RE/FE Pipeline — PR Validation"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate RE/FE Pipeline Output
+    runs-on: ubuntu-latest
+
+    # Only run on RE/FE pipeline PRs (branch name starts with re-fe/)
+    if: startsWith(github.head_ref, 're-fe/')
+
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ── Validation 1: Check all 10 RE docs exist ──
+      - name: Validate RE documents
+        id: check-docs
+        run: |
+          echo "## RE Document Validation" >> "$GITHUB_STEP_SUMMARY"
+
+          RE_TEMPLATES=(
+            "01-discovery-report"
+            "02-component-catalog"
+            "03-sequence-diagrams"
+            "04-business-rules-catalog"
+            "05-data-dictionary"
+            "06-data-flow-diagram"
+            "07-bdd-feature-specs"
+            "08-test-case-inventory"
+            "09-gap-report"
+            "10-field-to-field-mapping"
+          )
+
+          DOCS_FOUND=0
+          DOCS_MISSING=0
+          DOCS_DETAIL=""
+
+          if [ -d "re-docs" ]; then
+            for doc in "${RE_TEMPLATES[@]}"; do
+              FOUND=$(find re-docs -name "${doc}.md" | head -1)
+              if [ -n "$FOUND" ] && [ -s "$FOUND" ]; then
+                LINES=$(wc -l < "$FOUND")
+                DOCS_DETAIL="${DOCS_DETAIL}\n| ✅ | ${doc}.md | ${LINES} lines |"
+                DOCS_FOUND=$((DOCS_FOUND + 1))
+              else
+                DOCS_DETAIL="${DOCS_DETAIL}\n| ❌ | ${doc}.md | Missing or empty |"
+                DOCS_MISSING=$((DOCS_MISSING + 1))
+              fi
+            done
+          else
+            echo "⚠️ No re-docs/ directory found" >> "$GITHUB_STEP_SUMMARY"
+            DOCS_MISSING=10
+          fi
+
+          echo -e "| Status | Document | Details |\n|--------|----------|---------|${DOCS_DETAIL}" >> "$GITHUB_STEP_SUMMARY"
+          echo "docs_found=$DOCS_FOUND" >> "$GITHUB_OUTPUT"
+          echo "docs_missing=$DOCS_MISSING" >> "$GITHUB_OUTPUT"
+
+      # ── Validation 2: Check forward-engineered code exists ──
+      - name: Validate forward-engineered code
+        id: check-fe
+        run: |
+          echo "## Forward Engineering Validation" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ -d "forward-engineered" ]; then
+            FE_COUNT=$(find forward-engineered -name "*.java" | wc -l)
+            REPORT=$(find forward-engineered -name "MIGRATION_COMPARISON_REPORT.md" | head -1)
+            echo "✅ Found $FE_COUNT forward-engineered Java files" >> "$GITHUB_STEP_SUMMARY"
+            if [ -n "$REPORT" ]; then
+              echo "✅ Migration comparison report found" >> "$GITHUB_STEP_SUMMARY"
+              echo "has_report=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "⚠️ Migration comparison report missing" >> "$GITHUB_STEP_SUMMARY"
+              echo "has_report=false" >> "$GITHUB_OUTPUT"
+            fi
+            echo "fe_count=$FE_COUNT" >> "$GITHUB_OUTPUT"
+          else
+            echo "⚠️ No forward-engineered/ directory found" >> "$GITHUB_STEP_SUMMARY"
+            echo "fe_count=0" >> "$GITHUB_OUTPUT"
+            echo "has_report=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Validation 3: Check test files ──
+      - name: Validate test generation
+        id: check-tests
+        run: |
+          echo "## Test Validation" >> "$GITHUB_STEP_SUMMARY"
+
+          CONTRACT=$(find src/test -name "*ContractTest.java" 2>/dev/null | wc -l)
+          AUTOTEST=$(find src/test -path "*/autotest/*.java" 2>/dev/null | wc -l)
+          BEHAVIORAL=$(find src/test -path "*/behavioral/*.java" 2>/dev/null | wc -l)
+          TOTAL_NEW=$((CONTRACT + AUTOTEST + BEHAVIORAL))
+
+          echo "| Category | Count |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|----------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Contract tests | $CONTRACT |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| testgen unit tests | $AUTOTEST |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| testgen behavioral tests | $BEHAVIORAL |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Total new tests** | **$TOTAL_NEW** |" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "contract_tests=$CONTRACT" >> "$GITHUB_OUTPUT"
+          echo "autotest_count=$AUTOTEST" >> "$GITHUB_OUTPUT"
+          echo "behavioral_count=$BEHAVIORAL" >> "$GITHUB_OUTPUT"
+          echo "total_tests=$TOTAL_NEW" >> "$GITHUB_OUTPUT"
+
+      # ── Validation 4: Build the project ──
+      - name: Build project
+        id: build
+        run: |
+          echo "## Build Validation" >> "$GITHUB_STEP_SUMMARY"
+          if mvn compile --batch-mode --no-transfer-progress 2>&1; then
+            echo "✅ Build successful" >> "$GITHUB_STEP_SUMMARY"
+            echo "build_status=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "❌ Build failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "build_status=failure" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Validation 5: Run all tests ──
+      - name: Run tests
+        id: test
+        run: |
+          echo "## Test Execution" >> "$GITHUB_STEP_SUMMARY"
+          if mvn test --batch-mode --no-transfer-progress --fail-at-end 2>&1; then
+            echo "✅ All tests passed" >> "$GITHUB_STEP_SUMMARY"
+            echo "test_status=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "❌ Some tests failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "test_status=failure" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Validation 6: Upload test results ──
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: re-fe-test-results
+          path: |
+            target/surefire-reports/
+            reports/
+          retention-days: 14
+
+      # ── Post validation summary as PR comment ──
+      - name: Post validation summary
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const docsFound = '${{ steps.check-docs.outputs.docs_found }}';
+            const docsMissing = '${{ steps.check-docs.outputs.docs_missing }}';
+            const feCount = '${{ steps.check-fe.outputs.fe_count }}';
+            const hasReport = '${{ steps.check-fe.outputs.has_report }}';
+            const contractTests = '${{ steps.check-tests.outputs.contract_tests }}';
+            const autotestCount = '${{ steps.check-tests.outputs.autotest_count }}';
+            const behavioralCount = '${{ steps.check-tests.outputs.behavioral_count }}';
+            const totalTests = '${{ steps.check-tests.outputs.total_tests }}';
+            const buildStatus = '${{ steps.build.outputs.build_status }}';
+            const testStatus = '${{ steps.test.outputs.test_status }}';
+
+            const icon = (ok) => ok ? '✅' : '❌';
+            const overallPass = buildStatus === 'success' && testStatus === 'success' && docsMissing === '0';
+
+            const body = `## ${icon(overallPass)} RE/FE Pipeline — Validation Report
+
+            ### Reverse Engineering Documents
+            | Check | Status | Details |
+            |-------|--------|---------|
+            | RE Documents | ${icon(docsMissing === '0')} | ${docsFound}/10 found, ${docsMissing} missing |
+
+            ### Forward Engineering
+            | Check | Status | Details |
+            |-------|--------|---------|
+            | FE Code | ${icon(feCount !== '0')} | ${feCount} Java files generated |
+            | Migration Report | ${icon(hasReport === 'true')} | ${hasReport === 'true' ? 'Present' : 'Missing'} |
+
+            ### Testing
+            | Category | Count |
+            |----------|-------|
+            | Contract Tests | ${contractTests} |
+            | testgen Unit Tests | ${autotestCount} |
+            | testgen Behavioral Tests | ${behavioralCount} |
+            | **Total New Tests** | **${totalTests}** |
+
+            ### Build & Test Execution
+            | Check | Status |
+            |-------|--------|
+            | Build | ${icon(buildStatus === 'success')} ${buildStatus} |
+            | Tests | ${icon(testStatus === 'success')} ${testStatus} |
+
+            ---
+            ${overallPass
+              ? '### ✅ All validations passed — ready for human review.'
+              : '### ❌ Some validations failed — review the issues above before approving.'}
+            `.replace(/^            /gm, '');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: body
+            });

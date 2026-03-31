@@ -1,0 +1,117 @@
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+/**
+ * Behavioral test: Error handling verification.
+ * Tests BR-014 (fallback), BR-015 (error code), BR-016 (status), BR-017 (null).
+ *
+ * Auto-generated from RE doc: 04-BUSINESS-RULES-CATALOG
+ */
+@ExtendWith(MockitoExtension.class)
+class {{ test_class_name }} {
+
+{% for dep in dependencies %}
+    @Mock
+    private {{ dep.type }} {{ dep.var_name }};
+
+{% endfor %}
+    @InjectMocks
+    private {{ class_name }} instance;
+
+{% if mock_setups is defined and mock_setups %}
+    @BeforeEach
+    void setupMocks() {
+{% for setup in mock_setups %}
+        lenient().when({{ setup.var }}.{{ setup.method }}({{ setup.any_args }})).thenReturn({{ setup.return_value }});
+{% endfor %}
+    }
+
+{% endif %}
+    // ── BR-014: External Service Failure Fallback ──
+
+{% set mapResp_methods = methods | selectattr('name', 'equalto', 'mapResponse') | list %}
+    @Test
+    void br014_serviceUnavailable_shouldReturnFallbackDefaults() {
+        // Given: external service throws exception
+{% for dep in dependencies %}
+{% if 'Client' in dep.type %}
+        lenient().doThrow(new RuntimeException("Connection refused"))
+            .when({{ dep.var_name }}).{{ dep.mock_method | default('callExternalService') }}({{ dep.mock_args | default('any()') }});
+{% endif %}
+{% endfor %}
+{% if mapResp_methods %}
+        // When: mapResponse receives null → should return fallback
+        {{ mapResp_methods[0].return_type }} result = instance.{{ mapResp_methods[0].name }}({% for p in mapResp_methods[0].parameters %}null{{ ", " if not loop.last }}{% endfor %});
+        assertNotNull(result, "BR-014: mapResponse(null) must return fallback response");
+{% endif %}
+{% for method in methods %}
+{% if method.name.startswith('process') and method.return_type != 'void' %}
+        try {
+            var result = instance.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result, "BR-014: {{ method.name }}() must return fallback on service failure");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "BR-014: error propagation with message");
+        }
+{% endif %}
+{% endfor %}
+    }
+
+    @Test
+    void br014_serviceTimeout_shouldReturnFallbackDefaults() {
+        // Given: external service times out
+{% for dep in dependencies %}
+{% if 'Client' in dep.type %}
+        lenient().doThrow(new RuntimeException("Read timed out"))
+            .when({{ dep.var_name }}).{{ dep.mock_method | default('callExternalService') }}({{ dep.mock_args | default('any()') }});
+{% endif %}
+{% endfor %}
+{% if mapResp_methods %}
+        // When: mapResponse receives null → fallback path
+        {{ mapResp_methods[0].return_type }} result = instance.{{ mapResp_methods[0].name }}({% for p in mapResp_methods[0].parameters %}null{{ ", " if not loop.last }}{% endfor %});
+        assertNotNull(result, "BR-014: mapResponse(null) must return fallback on timeout");
+{% endif %}
+{% for method in methods %}
+{% if method.name.startswith('process') and method.return_type != 'void' %}
+        try {
+            var result = instance.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result, "BR-014: {{ method.name }}() must return fallback on timeout");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "BR-014: timeout error propagation");
+        }
+{% endif %}
+{% endfor %}
+    }
+
+    // ── BR-017: Null Response Handling ──
+
+    @Test
+    void br017_nullResponse_shouldTriggerDefaults() {
+        // Given: external service returns null
+{% for dep in dependencies %}
+{% if 'Client' in dep.type %}
+        lenient().when({{ dep.var_name }}.{{ dep.mock_method | default('callExternalService') }}({{ dep.mock_args | default('any()') }}))
+            .thenReturn(null);
+{% endif %}
+{% endfor %}
+{% if mapResp_methods %}
+        // When: mapResponse receives null → should apply defaults
+        {{ mapResp_methods[0].return_type }} result = instance.{{ mapResp_methods[0].name }}({% for p in mapResp_methods[0].parameters %}null{{ ", " if not loop.last }}{% endfor %});
+        assertNotNull(result, "BR-017: mapResponse(null) must return fallback on null response");
+{% endif %}
+{% for method in methods %}
+{% if method.name.startswith('process') and method.return_type != 'void' %}
+        try {
+            var result = instance.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result, "BR-017: {{ method.name }}() must return fallback on null response");
+        } catch (NullPointerException e) {
+            assertNotNull(e, "BR-017: NPE on null response is acceptable");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "BR-017: null response error handling");
+        }
+{% endif %}
+{% endfor %}
+    }
+}

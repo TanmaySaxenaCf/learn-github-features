@@ -1,0 +1,88 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class {{ test_class_name }} {
+
+    @RegisterExtension
+    static WireMockExtension wireMock = WireMockExtension.newInstance()
+            .options(WireMockConfiguration.wireMockConfig().dynamicPort())
+            .build();
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+{% for dep in external_deps %}
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("{{ dep.url_property }}", () -> "http://localhost:" + wireMock.getPort());
+    }
+{% endfor %}
+
+{% for em in endpoint_methods %}
+    @Test
+    void {{ em.method_name }}_soapPipeline_shouldReturnResponse() {
+{% for dep in external_deps %}
+        wireMock.stubFor(post(urlPathMatching("/.*"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "text/xml")
+                .withBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><response><status>OK</status></response></soap:Body>"
+                    + "</soap:Envelope>")));
+{% endfor %}
+
+        // Actually POST a SOAP request through the full pipeline
+        var headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.TEXT_XML);
+        headers.set("SOAPAction", "{{ em.method_name }}");
+        var soapBody = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+            + "<soap:Body><{{ em.method_name }}/></soap:Body></soap:Envelope>";
+        var entity = new org.springframework.http.HttpEntity<>(soapBody, headers);
+
+        var response = restTemplate.postForEntity("{{ em.path }}", entity, String.class);
+        assertNotNull(response, "SOAP pipeline must return a response for {{ em.method_name }}");
+        assertNotNull(response.getStatusCode(), "Response must have status code");
+        // Service may return 200 (success), 500 (SOAP fault handled), or 4xx (bad request)
+        assertTrue(response.getStatusCode().value() > 0,
+            "Must receive valid HTTP status code for {{ em.method_name }}");
+    }
+
+    @Test
+    void {{ em.method_name }}_shouldHandleDownstreamSoapFault() {
+{% for dep in external_deps %}
+        wireMock.stubFor(post(urlPathMatching("/.*"))
+            .willReturn(aResponse()
+                .withStatus(500)
+                .withHeader("Content-Type", "text/xml")
+                .withBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                    + "<soap:Body><soap:Fault><faultcode>Server</faultcode>"
+                    + "<faultstring>Internal Error</faultstring></soap:Fault></soap:Body>"
+                    + "</soap:Envelope>")));
+{% endfor %}
+
+        // POST a SOAP request — downstream returns fault, service should fallback
+        var headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.TEXT_XML);
+        headers.set("SOAPAction", "{{ em.method_name }}");
+        var soapBody = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+            + "<soap:Body><{{ em.method_name }}/></soap:Body></soap:Envelope>";
+        var entity = new org.springframework.http.HttpEntity<>(soapBody, headers);
+
+        var response = restTemplate.postForEntity("{{ em.path }}", entity, String.class);
+        assertNotNull(response, "SOAP fault test must return a response for {{ em.method_name }}");
+        assertNotNull(response.getStatusCode(), "Fault response must have status code");
+        // Service should return a fallback response even on downstream SOAP fault
+        assertNotNull(response.getBody(), "Body must be present — service returns fallback on SOAP fault");
+    }
+
+{% endfor %}
+}

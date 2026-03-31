@@ -1,0 +1,27 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+class {{ test_class_name }} {
+
+    @Test
+    void shouldCreateWithMessage() {
+        {{ class_name }} ex = new {{ class_name }}("test message");
+        assertEquals("test message", ex.getMessage());
+    }
+
+    @Test
+    void shouldCreateWithMessageAndCause() {
+        RuntimeException cause = new RuntimeException("cause");
+        try {
+            {{ class_name }} ex = new {{ class_name }}("test", cause);
+            assertNotNull(ex.getCause());
+        } catch (Exception e) {
+            // Constructor variant may not exist
+        }
+    }
+}

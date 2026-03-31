@@ -1,0 +1,56 @@
+{{ header }}
+
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+@ExtendWith(MockitoExtension.class)
+class {{ test_class_name }} {
+
+    @InjectMocks
+    private {{ class_name }} {{ instance_var }};
+
+{% for method in methods %}
+{% if method.parameters %}
+    @Test
+    void {{ method.name }}_shouldReturnResponseEntity() {
+        {{ method.parameters[0].type }} ex = new {{ method.parameters[0].type }}("test error");
+{% if method.return_type and method.return_type != 'void' %}
+        {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}(ex);
+        assertNotNull(result, "{{ method.name }}() must return a ResponseEntity");
+{% if 'ResponseEntity' in method.return_type %}
+        assertNotNull(result.getStatusCode(), "Response must have HTTP status code");
+        assertTrue(result.getStatusCode().is4xxClientError() || result.getStatusCode().is5xxServerError(),
+            "Exception handler must return 4xx or 5xx status");
+        assertNotNull(result.getBody(), "Response body must contain error details");
+{% endif %}
+{% else %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}(ex));
+{% endif %}
+    }
+
+    @Test
+    void {{ method.name }}_shouldHandleNullMessage() {
+        {{ method.parameters[0].type }} ex = new {{ method.parameters[0].type }}((String) null);
+{% if method.return_type and method.return_type != 'void' %}
+        {{ method.return_type }} result = {{ instance_var }}.{{ method.name }}(ex);
+        assertNotNull(result, "{{ method.name }}() must handle exception with null message");
+{% if 'ResponseEntity' in method.return_type %}
+        assertNotNull(result.getStatusCode(), "Response must have status even with null message");
+{% endif %}
+{% else %}
+        assertDoesNotThrow(() -> {{ instance_var }}.{{ method.name }}(ex));
+{% endif %}
+    }
+{% endif %}
+{% endfor %}
+
+{% if not methods %}
+    @Test
+    void classLoads() {
+        assertNotNull({{ instance_var }});
+    }
+{% endif %}
+}

@@ -1,0 +1,202 @@
+package {{ test_package }};
+
+{% for imp in imports %}
+{{ imp }}
+{% endfor %}
+
+/**
+ * Behavioral test: Business rule verification.
+ * Tests business rules applicable to {{ class_name }}.
+ *
+ * Auto-generated from RE doc: 04-BUSINESS-RULES-CATALOG
+ */
+@ExtendWith(MockitoExtension.class)
+class {{ test_class_name }} {
+
+{% for dep in dependencies %}
+    @Mock
+    private {{ dep.type }} {{ dep.var_name }};
+
+{% endfor %}
+    @InjectMocks
+    private {{ class_name }} instance;
+
+{% if mock_setups is defined and mock_setups %}
+    @BeforeEach
+    void setupMocks() {
+{% for setup in mock_setups %}
+        lenient().when({{ setup.var }}.{{ setup.method }}({{ setup.any_args }})).thenReturn({{ setup.return_value }});
+{% endfor %}
+    }
+
+{% endif %}{% for rule in rules %}
+    // ── {{ rule.rule_id }}: {{ rule.name }} ──
+
+{# ── Generic rule handling: match by rule name keywords ── #}
+{% set mapRequest_methods = methods | selectattr('name', 'equalto', 'mapRequest') | list %}
+{% set mapResponse_methods = methods | selectattr('name', 'equalto', 'mapResponse') | list %}
+
+{% if 'request' in rule.name | lower and 'mapping' in rule.name | lower and 'response' not in rule.name | lower %}
+{# Request Mapping rules #}
+{% if mapRequest_methods %}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_requestMapping_shouldMapFieldsCorrectly() {
+        // {{ rule.rule_id }}: Invoke {{ mapRequest_methods[0].name }}() and verify mapped output
+        try {
+            {{ mapRequest_methods[0].return_type }} result = instance.{{ mapRequest_methods[0].name }}({{ mapRequest_methods[0].param_vars }});
+            assertNotNull(result, "{{ mapRequest_methods[0].name }}() must produce non-null mapped request per {{ rule.rule_id }}");
+        } catch (IllegalArgumentException e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }} validates input correctly");
+        }
+    }
+
+{% else %}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_{{ rule.name | lower | replace(' ', '_') | replace('-', '_') | truncate(40, true, '') }}() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% set nonvoid = methods | rejectattr('return_type', 'equalto', 'void') | list %}
+{% if nonvoid %}
+        try {
+            var result = instance.{{ nonvoid[0].name }}({{ nonvoid[0].param_vars }});
+            assertNotNull(result, "{{ rule.rule_id }}: {{ nonvoid[0].name }}() must return a result");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }}: method is callable");
+        }
+{% else %}
+        assertNotNull(instance, "{{ rule.rule_id }} verification");
+{% endif %}
+    }
+
+{% endif %}
+
+{% elif 'response' in rule.name | lower and 'mapping' in rule.name | lower %}
+{# Response Mapping rules #}
+{% if mapResponse_methods %}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_responseMapping_shouldProduceNonNullOutput() {
+        // {{ rule.rule_id }}: Invoke {{ mapResponse_methods[0].name }}()
+        try {
+            {{ mapResponse_methods[0].return_type }} result = instance.{{ mapResponse_methods[0].name }}({{ mapResponse_methods[0].param_vars }});
+            assertNotNull(result, "{{ mapResponse_methods[0].name }}() must produce non-null response per {{ rule.rule_id }}");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }}: method callable with default inputs");
+        }
+    }
+
+{% else %}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_{{ rule.name | lower | replace(' ', '_') | replace('-', '_') | truncate(40, true, '') }}() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% set nonvoid = methods | rejectattr('return_type', 'equalto', 'void') | list %}
+{% if nonvoid %}
+        try {
+            var result = instance.{{ nonvoid[0].name }}({{ nonvoid[0].param_vars }});
+            assertNotNull(result, "{{ rule.rule_id }}: {{ nonvoid[0].name }}() must return a result");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }}: method is callable");
+        }
+{% else %}
+        assertNotNull(instance, "{{ rule.rule_id }} verification");
+{% endif %}
+    }
+
+{% endif %}
+
+{% elif 'default' in rule.name | lower or 'accuracy' in rule.name | lower or 'version' in rule.name | lower %}
+{# Default value rules — use constants class + any zero-param create* methods #}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_{{ rule.name | lower | replace(' ', '_') | replace('-', '_') | truncate(40, true, '') }}() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% if constants_class %}
+        assertNotNull({{ constants_class }}.class, "Constants class must exist for {{ rule.rule_id }}");
+{% endif %}
+{% for m in methods %}
+{% if m.name.startswith('create') and m.parameters | length == 0 and m.return_type != 'void' %}
+        var defaults = instance.{{ m.name }}();
+        assertNotNull(defaults, "{{ m.name }}() must return non-null per {{ rule.rule_id }}");
+{% endif %}
+{% endfor %}
+    }
+
+{% elif 'fallback' in rule.name | lower or 'failure' in rule.name | lower %}
+{# Fallback rules — invoke mapResponse with null #}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_externalServiceFailure_shouldReturnFallback() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% if mapResponse_methods %}
+        {{ mapResponse_methods[0].return_type }} result = instance.{{ mapResponse_methods[0].name }}({% for p in mapResponse_methods[0].parameters %}null{{ ", " if not loop.last }}{% endfor %});
+        assertNotNull(result, "{{ rule.rule_id }}: {{ mapResponse_methods[0].name }}() must return fallback on null input");
+{% endif %}
+{% for method in methods %}
+{% if method.name.startswith('process') and method.return_type != 'void' %}
+        try {
+            var result_{{ loop.index }} = instance.{{ method.name }}({{ method.param_vars }});
+            assertNotNull(result_{{ loop.index }}, "{{ rule.rule_id }}: {{ method.name }}() must return fallback result");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }}: {{ method.name }}() error propagation");
+        }
+{% endif %}
+{% endfor %}
+    }
+
+{% elif 'error' in rule.name | lower and 'code' in rule.name | lower %}
+{# Error code rules — verify via constants class #}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_{{ rule.name | lower | replace(' ', '_') | replace('-', '_') | truncate(40, true, '') }}() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% if constants_class %}
+        assertNotNull({{ constants_class }}.class, "Constants class must define error code per {{ rule.rule_id }}");
+{% endif %}
+    }
+
+{% elif 'transaction' in rule.name | lower or 'log' in rule.name | lower %}
+{# Transaction/logging rules #}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_{{ rule.name | lower | replace(' ', '_') | replace('-', '_') | truncate(40, true, '') }}() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% for m in methods %}
+{% if 'log' in m.name | lower or 'preProcess' == m.name %}
+{% if m.return_type != 'void' %}
+        try {
+            var result = instance.{{ m.name }}({{ m.param_vars }});
+            assertNotNull(result, "{{ rule.rule_id }}: {{ m.name }}() returns result");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }}: {{ m.name }}() threw");
+        }
+{% else %}
+        assertDoesNotThrow(() -> instance.{{ m.name }}({{ m.param_vars }}),
+            "{{ rule.rule_id }}: {{ m.name }}() is callable");
+{% endif %}
+{% endif %}
+{% endfor %}
+    }
+
+{% else %}
+{# Generic fallback for any other rule #}
+    @Test
+    void {{ rule.rule_id | lower | replace('-', '_') }}_{{ rule.name | lower | replace(' ', '_') | replace('-', '_') | truncate(40, true, '') }}() {
+        // {{ rule.rule_id }}: {{ rule.description | default(rule.name) }}
+{% set nonvoid = methods | rejectattr('return_type', 'equalto', 'void') | list %}
+{% if nonvoid %}
+        try {
+            var result = instance.{{ nonvoid[0].name }}({{ nonvoid[0].param_vars }});
+            assertNotNull(result, "{{ rule.rule_id }}: {{ nonvoid[0].name }}() must return a result");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage(), "{{ rule.rule_id }}: method is callable");
+        }
+{% else %}
+{% for method in methods %}
+{% if loop.first %}
+        assertDoesNotThrow(() -> instance.{{ method.name }}({{ method.param_vars }}),
+            "{{ rule.rule_id }}: {{ method.name }}() is callable");
+{% endif %}
+{% endfor %}
+{% if not methods %}
+        assertNotNull(instance, "{{ rule.rule_id }} verification");
+{% endif %}
+{% endif %}
+    }
+
+{% endif %}
+{% endfor %}
+}

@@ -1,0 +1,90 @@
+# ================================
+# RE/FE Pipeline — Issue Template
+# ================================
+# This template captures the source folder path and options
+# to trigger the automated Reverse Engineering → Forward Engineering → Testing pipeline.
+
+name: "🔄 RE/FE Pipeline — Reverse & Forward Engineer a Service"
+description: "Trigger automated reverse engineering, forward engineering, and testing for a Java/Spring Boot service folder"
+title: "[RE/FE Pipeline]: "
+labels: ["re-fe-pipeline", "automated"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Automated Pipeline
+        Fill out this form to trigger the **Reverse Engineering → Forward Engineering → Testing** pipeline.
+        Once submitted, the pipeline will automatically:
+        1. **Reverse Engineering** — Generate 10 comprehensive RE documents (discovery report, component catalog, sequence diagrams, business rules, data dictionary, data flow diagrams, BDD specs, test case inventory, gap report, field-to-field mapping)
+        2. **Forward Engineering** — Generate modernized Spring Boot 3.x code using the FE template
+        3. **Testing** — Generate JUnit 5, WireMock, behavioral, and contract tests using the testgen framework
+        4. **Pull Request** — Open a PR with all artifacts for human review
+
+  - type: input
+    id: source_folder
+    attributes:
+      label: Source Folder Path
+      description: "Relative path to the Java/Spring Boot service folder in this repository."
+      placeholder: "src/main/java/com/example/taskmanager/service/"
+    validations:
+      required: true
+
+  - type: input
+    id: service_name
+    attributes:
+      label: Service Name
+      description: "A short name for the service being analyzed (used for output folder naming)."
+      placeholder: "TaskService"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: service_type
+    attributes:
+      label: Service Type
+      description: "What type of Spring Boot component is in this folder?"
+      options:
+        - REST Controller
+        - Service Layer
+        - Repository/Data Layer
+        - Full Module (Controller + Service + Repository)
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: pipeline_stages
+    attributes:
+      label: Pipeline Stages
+      description: "Select which stages to run. All are recommended for full pipeline."
+      options:
+        - label: "📖 Reverse Engineering — Generate architecture docs, API specs, class diagrams, dependency maps"
+          required: true
+        - label: "🏗️ Forward Engineering — Generate modernized/refactored code"
+          required: false
+        - label: "🧪 Integration Testing — Generate contract tests (old behavior vs new)"
+          required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: "Any specific instructions, constraints, or goals for this pipeline run."
+      placeholder: |
+        - Focus on modernizing the REST API to use records for DTOs
+        - Pay attention to error handling improvements
+        - The service connects to an H2 database
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: "The source folder path exists in this repository"
+          required: true
+        - label: "The folder contains Java/Spring Boot code"
+          required: true
