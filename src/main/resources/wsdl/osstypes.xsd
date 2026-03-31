@@ -1,0 +1,431 @@
+
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:simpleType name="OptaAddressKeyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{2}[A-Z]-\d{2}[A-Z]-\d{2}[A-Z]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="UnparsedStreetAddressType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="200"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StreetNumberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[A-Za-z]*\d+[A-Za-z]*"/>
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StreetNameType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StreetTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="StreetDirectionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="20"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="UnitNumberType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="MunicipalityType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ProvinceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AB"/>
+            <xsd:enumeration value="BC"/>
+            <xsd:enumeration value="MB"/>
+            <xsd:enumeration value="NB"/>
+            <xsd:enumeration value="NL"/>
+            <xsd:enumeration value="NS"/>
+            <xsd:enumeration value="NT"/>
+            <xsd:enumeration value="NU"/>
+            <xsd:enumeration value="ON"/>
+            <xsd:enumeration value="PE"/>
+            <xsd:enumeration value="QC"/>
+            <xsd:enumeration value="SK"/>
+            <xsd:enumeration value="YT"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PostalCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="([A-Z]\d){3}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="GeocodeType">
+        <xsd:sequence>
+            <xsd:element name="Latitude" type="xsd:double"/>
+            <xsd:element name="Longitude" type="xsd:double"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="EmailAddressType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[^@\s]+@[^@\s]+"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="BooleanWithUnknownType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="true"/>
+            <xsd:enumeration value="false"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="YearBuiltType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{4}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="SquareFootageType">
+        <xsd:restriction base="xsd:integer"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="FoundationType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Basement"/>
+            <xsd:enumeration value="Crawlspace"/>
+            <xsd:enumeration value="Pier"/>
+            <xsd:enumeration value="Slab on Grade"/>
+            <xsd:enumeration value="Walkout Basement"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ArchitecturalStyleType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Detached"/>
+            <xsd:enumeration value="End Row"/>
+            <xsd:enumeration value="In Row"/>
+            <xsd:enumeration value="Semi Detached"/>
+            <xsd:enumeration value="Duplex"/>
+            <xsd:enumeration value="Triplex"/>
+            <xsd:enumeration value="Fourplex"/>
+            <xsd:enumeration value="Fiveplex"/>
+            <xsd:enumeration value="Sixplex"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ResidentialStoreyCountType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="1.5"/>
+            <xsd:enumeration value="2"/>
+            <xsd:enumeration value="2.5"/>
+            <xsd:enumeration value="3"/>
+            <xsd:enumeration value="3.5"/>
+            <xsd:enumeration value="4"/>
+            <xsd:enumeration value="BiLevel"/>
+            <xsd:enumeration value="TriLevel"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ResidentialKitchenCountType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="2"/>
+            <xsd:enumeration value="3"/>
+            <xsd:enumeration value="More"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ResidentialBathroomCountType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="1.5"/>
+            <xsd:enumeration value="2"/>
+            <xsd:enumeration value="2.5"/>
+            <xsd:enumeration value="3"/>
+            <xsd:enumeration value="3.5"/>
+            <xsd:enumeration value="4"/>
+            <xsd:enumeration value="4.5"/>
+            <xsd:enumeration value="More"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ExteriorWallType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Brick"/>
+            <xsd:enumeration value="Brick Veneer"/>
+            <xsd:enumeration value="Concrete"/>
+            <xsd:enumeration value="Hardie Board"/>
+            <xsd:enumeration value="Logs"/>
+            <xsd:enumeration value="Stone"/>
+            <xsd:enumeration value="Stone Veneer"/>
+            <xsd:enumeration value="Stucco"/>
+            <xsd:enumeration value="Vinyl Siding"/>
+            <xsd:enumeration value="Wood Siding"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="RoofType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Asphalt"/>
+            <xsd:enumeration value="Clay Tile"/>
+            <xsd:enumeration value="Concrete"/>
+            <xsd:enumeration value="Copper"/>
+            <xsd:enumeration value="Rubber"/>
+            <xsd:enumeration value="Slate Tile"/>
+            <xsd:enumeration value="Steel"/>
+            <xsd:enumeration value="Tar and Gravel"/>
+            <xsd:enumeration value="Tin"/>
+            <xsd:enumeration value="Wood Shingles"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="FinishedBasementType">
+        <xsd:restriction base="xsd:boolean"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="GarageType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Attached Garage"/>
+            <xsd:enumeration value="Built-in Garage"/>
+            <xsd:enumeration value="Basement Garage"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="GarageNumberOfCarsType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:enumeration value="0"/>
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="2"/>
+            <xsd:enumeration value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="SwimmingPoolType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Inground Concrete"/>
+            <xsd:enumeration value="Inground Fibre Glass"/>
+            <xsd:enumeration value="Inground Vinyl"/>
+            <xsd:enumeration value="Above Ground"/>
+            <xsd:enumeration value="Above Ground Fibre Glass"/>
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PrimaryHeatingType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Geothermal"/>
+            <xsd:enumeration value="Radiant"/>
+            <xsd:enumeration value="Electric"/>
+            <xsd:enumeration value="Natural Gas Forced Air"/>
+            <xsd:enumeration value="Oil"/>
+            <xsd:enumeration value="Water"/>
+            <xsd:enumeration value="Wood"/>
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="AuxiliaryHeatingType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Fireplace"/>
+            <xsd:enumeration value="Woodstove"/>
+            <xsd:enumeration value="Wood Furnace"/>
+            <xsd:enumeration value="Pellet Stove"/>
+            <xsd:enumeration value="Electric"/>
+            <xsd:enumeration value="None"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PlumbingType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Copper"/>
+            <xsd:enumeration value="Galvanized"/>
+            <xsd:enumeration value="Iron"/>
+            <xsd:enumeration value="PVC"/>
+            <xsd:enumeration value="ABS"/>
+            <xsd:enumeration value="Pex"/>
+            <xsd:enumeration value="Unknown"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CurrencyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CAD"/>
+            <xsd:enumeration value="USD"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="SICCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{4}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="IBCCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{4}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="NAICSCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{6}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="MultilingualStringType">
+        <xsd:sequence>
+            <xsd:element name="en" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="fr" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ProductResponseStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Success"/>
+            <xsd:enumeration value="Failed"/>
+            <xsd:enumeration value="Unauthorized"/>
+            <xsd:enumeration value="ProductNotFound"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="MessageType">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="255"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="AnyType">
+        <xsd:sequence>
+            <xsd:any minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="MultiResidentialPropertyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Apartment"/>
+            <xsd:enumeration value="Condominium"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OwnershipType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Owned"/>
+            <xsd:enumeration value="Rented"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="OccupancyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Primary"/>
+            <xsd:enumeration value="SecondarySeasonal"/>
+            <xsd:enumeration value="SecondaryNonSeasonal"/>
+            <xsd:enumeration value="Rental"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ConstructionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration id="FireResistive" value="Fire Resistive - Class 1"/>
+            <xsd:enumeration id="MasonryNonCombustible" value="Masonry Non-Combustible - Class 2"/>
+            <xsd:enumeration id="NonCombustible" value="Non-Combustible - Class 3"/>
+            <xsd:enumeration id="OrdinaryConstruction" value="Ordinary Construction - Class 4"/>
+            <xsd:enumeration id="BrickVeneer" value="Brick Veneer - Class 5"/>
+            <xsd:enumeration id="Frame" value="Frame - Class 6"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ContentType">
+        <xsd:sequence>
+            <xsd:element name="ContentURL" type="xsd:string"/>
+            <xsd:element name="MIMEType" type="xsd:string"/>
+            <xsd:element name="Expiry" type="xsd:dateTime" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="CommercialStructureStyleType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration id="HighRise" value="High Rise"/>
+            <xsd:enumeration id="Row" value="Row"/>
+            <xsd:enumeration id="WalkUp" value="Walk Up"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="LanguageType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration id="English" value="E"/>
+            <xsd:enumeration id="French" value="F"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="InspectionDetailsType">
+        <xsd:sequence>
+            <xsd:element name="SponsoredInspection" type="xsd:boolean"/>
+            <xsd:element name="InspectionDate" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="LegalDescriptionType">
+        <xsd:sequence>
+            <xsd:element name="Quarter" type="LegalDescriptionQuarterType" minOccurs="0"/>
+            <xsd:element name="LegalSubdivision" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Section" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Township" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Range" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Meridian" type="LegalDescriptionMeridianType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="LegalDescriptionQuarterType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NW 1/4"/>
+            <xsd:enumeration value="NE 1/4"/>
+            <xsd:enumeration value="SW 1/4"/>
+            <xsd:enumeration value="SE 1/4"/>
+            <xsd:enumeration value="N 1/2"/>
+            <xsd:enumeration value="S 1/2"/>
+            <xsd:enumeration value="E 1/2"/>
+            <xsd:enumeration value="W 1/2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="LegalDescriptionMeridianType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="W1"/>
+            <xsd:enumeration value="W2"/>
+            <xsd:enumeration value="W3"/>
+            <xsd:enumeration value="W4"/>
+            <xsd:enumeration value="W5"/>
+            <xsd:enumeration value="W6"/>
+            <xsd:enumeration value="W7"/>
+            <xsd:enumeration value="E1"/>
+            <xsd:enumeration value="E2"/>
+            <xsd:enumeration value="Coast"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

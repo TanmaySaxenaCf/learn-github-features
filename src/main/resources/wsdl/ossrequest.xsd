@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="OSSRequestType">
+        <xsd:sequence>
+            <xsd:element name="RequestHeader" type="RequestHeaderType"/>
+            <xsd:element name="RequestBody" type="RequestBodyType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestHeaderType">
+        <xsd:sequence>
+            <xsd:element name="RequestID" type="xsd:string"/>
+            <xsd:element name="RequestSentTimestamp" type="xsd:dateTime"/>
+            <xsd:element name="Requestor" type="RequestorType"/>
+            <xsd:element name="Language" type="LanguageType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestorType">
+        <xsd:sequence>
+            <xsd:element name="Carrier" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Brokerage" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Username" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestBodyType">
+        <xsd:sequence>
+            <xsd:element name="Property" type="RequestPropertyType" maxOccurs="10"/>
+            <xsd:element name="RequestedProducts" type="RequestedProductsType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestPropertyType">
+        <xsd:sequence>
+            <xsd:element name="Address" type="RequestAddressType"/>
+            <xsd:element name="Business" type="RequestBusinessType" maxOccurs="unbounded" minOccurs="0"/>
+            <xsd:element name="Policy" type="RequestPolicyType" minOccurs="0"/>
+            <xsd:choice>
+                <xsd:element name="ResidentialLineOfBusiness" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element name="MultiResidentialBuilding"
+                                         type="RequestMultiResidentialBuildingType"/>
+                            <xsd:element name="ResidentialBuilding"
+                                         type="RequestResidentialConstructionFeaturesType"/>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="CommercialLineOfBusiness" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="CommercialBuilding" type="RequestCommercialConstructionFeaturesType"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:element name="InspectionOrder" type="RequestInspectionOrderType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestMultiResidentialBuildingType">
+        <xsd:sequence>
+            <xsd:element name="BuildingFeatures" type="BuildingFeaturesType" minOccurs="0"/>
+            <xsd:element name="UnitFeatures" type="UnitFeaturesType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="BuildingFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="PropertyType" type="MultiResidentialPropertyType" minOccurs="0"/>
+            <xsd:element name="YearBuilt" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="NumberOfStoreys" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="ConstructionType" type="ConstructionType" minOccurs="0"/>
+            <xsd:element name="RoofType" type="RoofType" minOccurs="0"/>
+            <xsd:element name="HeatingType" type="PrimaryHeatingType" minOccurs="0"/>
+            <xsd:element name="StructureType" type="CommercialStructureStyleType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="UnitFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="FloorLevel" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="TotalFloorArea" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="NumberOfBedrooms" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="NumberOfBathrooms" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestCommercialConstructionFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="YearBuilt" type="xsd:integer"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestBusinessType">
+        <xsd:sequence>
+            <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="IndustryCodes" type="RequestedIndustryCodeType"/>
+            <xsd:element name="TotalRevenue" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="EmployeeCount" type="xsd:double" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestPolicyType">
+        <xsd:sequence>
+            <xsd:element name="Insured" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="PackageType" type="PackageType" minOccurs="0"/>
+            <xsd:element name="PolicyNumber" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="PolicyType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="TotalInsuredValue" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="CoverageAmounts" type="CoverageAmountType" minOccurs="0"/>
+            <xsd:element name="Limit" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="Deductible" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="OccupancyType" type="OccupancyType" minOccurs="0"/>
+            <xsd:element name="OwnershipType" type="OwnershipType" minOccurs="0"/>
+            <xsd:element name="EffectiveDate" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="BrokerName" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="MailingAddress" type="RequestAddressType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestedIndustryCodeType">
+        <xsd:sequence>
+            <xsd:element name="SICCode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="IBCCode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="NAICSCode" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestAddressType">
+        <xsd:sequence>
+            <xsd:element name="AddressID" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="OptaAddressKey" type="xsd:string" minOccurs="0"/>
+            <xsd:choice>
+                <xsd:element name="StreetAddress" type="xsd:string"/>
+                <xsd:sequence>
+                    <xsd:element name="StreetNumber" type="xsd:string"/>
+                    <xsd:element name="StreetName" type="xsd:string"/>
+                    <xsd:element name="StreetType" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StreetDirection" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="UnitNumber" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:element name="LegalDescription" type="LegalDescriptionType" minOccurs="0"/>
+            </xsd:choice>
+            <xsd:element name="Municipality" type="xsd:string"/>
+            <xsd:element name="Province" type="xsd:string"/>
+            <xsd:element name="PostalCode" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Geocode" type="GeocodeType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestResidentialConstructionFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="YearBuilt" type="YearBuiltType" minOccurs="0"/>
+            <xsd:element name="SquareFootage" type="SquareFootageType" minOccurs="0"/>
+            <xsd:element name="FoundationType" type="FoundationType" minOccurs="0"/>
+            <xsd:element name="ArchitecturalStyleType" type="ArchitecturalStyleType" minOccurs="0"/>
+            <xsd:element name="StoreyCount" type="ResidentialStoreyCountType" minOccurs="0"/>
+            <xsd:element name="KitchenCount" type="ResidentialKitchenCountType" minOccurs="0"/>
+            <xsd:element name="BathroomCount" type="ResidentialBathroomCountType" minOccurs="0"/>
+            <xsd:element name="ExteriorWallType" type="ExteriorWallType" minOccurs="0"/>
+            <xsd:element name="RoofType" type="RoofType" minOccurs="0"/>
+            <xsd:element name="FinishedBasement" type="FinishedBasementType" minOccurs="0"/>
+            <xsd:element name="GarageType" type="GarageType" minOccurs="0"/>
+            <xsd:element name="GarageNumberOfCars" type="GarageNumberOfCarsType" minOccurs="0"/>
+            <xsd:element name="SwimmingPoolType" type="SwimmingPoolType" minOccurs="0"/>
+            <xsd:element name="PrimaryHeatingType" type="PrimaryHeatingType" minOccurs="0"/>
+            <xsd:element name="AuxiliaryHeatingType" type="AuxiliaryHeatingType" minOccurs="0"/>
+            <xsd:element name="PlumbingType" type="PlumbingType" minOccurs="0"/>
+            <xsd:element name="CommercialIndicator" type="xsd:boolean" minOccurs="0"/>
+            <xsd:element name="OutbuildingPresent" type="BooleanWithUnknownType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestedProductsType">
+        <xsd:sequence>
+            <xsd:element name="Product" type="ProductType" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ProductType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="iClarifyResidential"/>
+            <xsd:enumeration value="iClarifyCommercialOccupancy"/>
+            <xsd:enumeration value="CommercialPerilScore"/>
+            <xsd:enumeration value="FUS"/>
+            <xsd:enumeration value="ResidentialPerilScore"/>
+            <xsd:enumeration value="FloodScore"/>
+            <xsd:enumeration value="InspectionScore"/>
+            <xsd:enumeration value="Attributes"/>
+            <xsd:enumeration value="iClarifyCondoTenant"/>
+            <xsd:enumeration value="ResidentialMarketValuation"/>
+            <xsd:enumeration value="iClarifyResidentialReport"/>
+            <xsd:enumeration value="InspectionOrdering"/>
+            <xsd:enumeration value="iClarifyCommercialConstructionFeatures"/>
+            <xsd:enumeration value="BuildingImagery"/>
+            <xsd:enumeration value="AddressSearch"/>
+            <xsd:enumeration value="iClarifyFinancialResidentialPrefill"/>
+            <xsd:enumeration value="OptaAddressKey"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="IndustryCodeType">
+        <xsd:sequence>
+            <xsd:element name="IBCCode" type="IBCCodeType" minOccurs="0"/>
+            <xsd:element name="SICCode" type="SICCodeType" minOccurs="0"/>
+            <xsd:element name="NAICSCode" type="NAICSCodeType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CoverageAmountType">
+        <xsd:sequence>
+            <xsd:element name="Building" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="DetachedPrivateStructures" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="Contents" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="AdditionalLivingExpenses" type="xsd:double" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="PackageType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Homeowner"/>
+            <xsd:enumeration value="Condo"/>
+            <xsd:enumeration value="Tenant"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="RequestInspectionOrderType">
+        <xsd:sequence>
+            <xsd:element name="TypeOfInspection" type="xsd:string"/>
+            <xsd:element name="NotificationEmail" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="AbeyanceDate" type="xsd:date" minOccurs="0"/>
+            <xsd:element name="ContactInformation" type="RequestContactInformationType"/>
+            <xsd:element name="SpecialHandlingInstructions" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="UnderwritingConcerns" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="InspectionConcerns" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequestContactInformationType">
+        <xsd:sequence>
+            <xsd:element name="NameOfContact" type="xsd:string"/>
+            <xsd:element name="ContactNumber" type="xsd:string"/>
+            <xsd:element name="Email" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

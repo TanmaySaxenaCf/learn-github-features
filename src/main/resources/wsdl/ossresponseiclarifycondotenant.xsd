@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="iClarifyCondoTenantProductType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="Property" type="ResponseCondoTenantPropertyType" minOccurs="0"/>
+                    <xsd:element name="CondoTenantPerilScore" type="ResponseCondoTenantPerilScoreType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseCondoTenantPropertyType">
+        <xsd:sequence>
+            <xsd:element name="ResidentialLineOfBusiness">
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="MultiResidentialBuilding"
+                                     type="ResponseMultiResidentialBuildingType"/>
+                        <xsd:element name="ResidentialBuilding"
+                                     type="ResponseResidentialConstructionFeaturesType"/>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseMultiResidentialBuildingType">
+        <xsd:sequence>
+            <xsd:element name="BuildingFeatures" type="ResponseBuildingFeaturesType" minOccurs="0"/>
+            <xsd:element name="UnitFeatures" type="ResponseUnitFeaturesType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseBuildingFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="PropertyType" type="MultiResidentialPropertyType" minOccurs="0"/>
+            <xsd:element name="YearBuilt" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="NumberOfStoreys" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="ConstructionType" type="ConstructionType" minOccurs="0"/>
+            <xsd:element name="RoofType" type="RoofType" minOccurs="0"/>
+            <xsd:element name="HeatingType" type="PrimaryHeatingType" minOccurs="0"/>
+            <xsd:element name="StructureType" type="CommercialStructureStyleType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseUnitFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="FloorLevel" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="TotalFloorArea" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="NumberOfBedrooms" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="NumberOfBathrooms" type="ResidentialBathroomCountType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseCondoTenantPerilScoreType">
+        <xsd:sequence>
+            <xsd:element name="PerilScoreTotal" type="xsd:integer"/>
+            <xsd:element name="PerilScoreWater" type="xsd:integer"/>
+            <xsd:element name="PerilScoreFire" type="xsd:integer"/>
+            <xsd:element name="PerilScoreWindHail" type="xsd:integer"/>
+            <xsd:element name="PerilScoreCrime" type="xsd:integer"/>
+            <xsd:element name="PerilScoreSewer" type="xsd:integer"/>
+            <xsd:element name="PerilScoreOther" type="xsd:integer"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="FloodScoreProductType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="FloodScores" type="FloodScoresType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="FloodScoresType">
+        <xsd:sequence>
+            <xsd:element name="FloodScore" type="FloodScoreType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="FloodMap" type="FloodMapType" minOccurs="0" maxOccurs="3"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FloodScoreType">
+        <xsd:sequence>
+            <xsd:element name="Zone" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Premium" type="FloodValueType" minOccurs="0"/>
+            <xsd:element name="Limit" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="Deductible" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="FloodScore" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="AverageAnnualLossScore" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="AverageAnnualLossValues" type="FloodValueType" minOccurs="0"/>
+            <xsd:element name="RateFactor" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="Default" type="xsd:boolean" minOccurs="0" default="false"/>
+            <xsd:choice minOccurs="0">
+                <xsd:element name="ResidentialModifiers" type="ResidentialConstructionFeaturesType"/>
+                <xsd:element name="MultiResidentialModifiers" type="MultiResidentialConstructionFeaturesType"/>
+            </xsd:choice>
+            <xsd:element name="AdditionalDetails" type="FloodDetailType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FloodDetailType">
+        <xsd:sequence>
+            <xsd:element name="Key" type="xsd:string"/>
+            <xsd:element name="Value" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="MultiResidentialConstructionFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="FloorLevel" type="xsd:integer"/>
+            <xsd:element name="ConstructionType" type="ConstructionType"/>
+            <xsd:element name="BasementPresent" type="BooleanWithUnknownType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResidentialConstructionFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="YearBuilt" type="YearBuiltType" minOccurs="0"/>
+            <xsd:element name="SquareFootage" type="SquareFootageType" minOccurs="0"/>
+            <xsd:element name="FoundationType" type="FoundationType" minOccurs="0"/>
+            <xsd:element name="ArchitecturalStyleType" type="ArchitecturalStyleType" minOccurs="0"/>
+            <xsd:element name="StoreyCount" type="ResidentialStoreyCountType" minOccurs="0"/>
+            <xsd:element name="KitchenCount" type="ResidentialKitchenCountType" minOccurs="0"/>
+            <xsd:element name="BathroomCount" type="ResidentialBathroomCountType" minOccurs="0"/>
+            <xsd:element name="ExteriorWallType" type="ExteriorWallType" minOccurs="0"/>
+            <xsd:element name="RoofType" type="RoofType" minOccurs="0"/>
+            <xsd:element name="FinishedBasement" type="FinishedBasementType" minOccurs="0"/>
+            <xsd:element name="GarageType" type="GarageType" minOccurs="0"/>
+            <xsd:element name="GarageNumberOfCars" type="GarageNumberOfCarsType" minOccurs="0"/>
+            <xsd:element name="SwimmingPoolType" type="SwimmingPoolType" minOccurs="0"/>
+            <xsd:element name="PrimaryHeatingType" type="PrimaryHeatingType" minOccurs="0"/>
+            <xsd:element name="AuxiliaryHeatingType" type="AuxiliaryHeatingType" minOccurs="0"/>
+            <xsd:element name="PlumbingType" type="PlumbingType" minOccurs="0"/>
+            <xsd:element name="CommercialIndicator" type="xsd:boolean" minOccurs="0"/>
+            <xsd:element name="OutbuildingPresent" type="BooleanWithUnknownType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FloodValueType">
+        <xsd:sequence>
+            <xsd:element name="Building" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="Contents" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="Total" type="xsd:float" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FloodMapType">
+        <xsd:sequence>
+            <xsd:element name="FloodEvent" type="FloodEventType" minOccurs="0"/>
+            <xsd:element name="Content" type="ContentType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="FloodEventType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:enumeration value="50"/>
+            <xsd:enumeration value="100"/>
+            <xsd:enumeration value="1000"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

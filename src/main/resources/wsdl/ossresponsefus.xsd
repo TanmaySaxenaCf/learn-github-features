@@ -1,0 +1,158 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+	<xsd:complexType name="FUSProductType">
+		<xsd:complexContent>
+			<xsd:extension base="BaseProductType">
+				<xsd:sequence>
+					<xsd:element name="Dwelling" type="FUSProductDwellingType"/>
+					<xsd:element name="Commercial" type="FUSProductCommercialType"/>
+					<xsd:element name="EarthquakeCodes" type="EarthquakeCodesType" minOccurs="0"/>
+					<xsd:element name="HydrantCounts" type="HydrantCountsType" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FUSProductDwellingType">
+		<xsd:sequence>
+			<xsd:element name="RespondingFirehall" type="FirehallType"/>
+			<xsd:element name="DwellingGrades" type="DwellingGradesType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="DwellingGradesType">
+		<xsd:sequence>
+			<xsd:element name="HydrantProtectedGrade" type="DwellingProtectedGradeType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="FirehallProtectedGrade" type="DwellingProtectedGradeType" minOccurs="0"/>
+			<xsd:element name="AllOtherAreasGrade" type="DwellingProtectedGradeType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="DwellingProtectedGradeType">
+		<xsd:sequence>
+			<xsd:element name="Grade" type="xsd:string"/>
+			<xsd:element name="WaterSystem" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="FUSProductCommercialType">
+		<xsd:sequence>
+			<xsd:element name="RespondingFirehall" type="FirehallType"/>
+			<xsd:element name="CommercialGrade" type="CommercialGradeType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="CommercialGradeType">
+		<xsd:sequence>
+			<xsd:element name="PublicFireProtectionClassification" type="xsd:integer"/>
+			<xsd:element name="RiskSCORDetail" type="RiskSCORDetailType" minOccurs="0" maxOccurs="2"/>
+			<xsd:element name="WaterSystem" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RiskSCORDetailType">
+		<xsd:sequence>
+			<xsd:element name="RiskSCOR" type="xsd:integer"/>
+			<xsd:element name="Type" type="RiskSCORType"/>
+			<xsd:element name="Adjustment" type="RiskSCORAdjustmentType" minOccurs="0" maxOccurs="2"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="RiskSCORAdjustmentType">
+		<xsd:sequence>
+			<xsd:element name="AdjustmentType" type="xsd:string"/>
+			<xsd:element name="Adjustment" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="RiskSCORType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Conditional"/>
+			<xsd:enumeration value="Unconditional"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="FirehallType">
+		<xsd:sequence>
+            <xsd:element name="Name" type="xsd:string"/>
+			<xsd:element name="Address" type="xsd:string"/>
+			<xsd:element name="RoadDistanceKilometres" type="xsd:float"/>
+			<xsd:element name="GoverningAgency" type="xsd:string"/>
+			<xsd:element name="ProtectionGradeTerritories">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Commercial" type="ProtectionGradeTerritoryType"/>
+						<xsd:element name="Dwelling" type="ProtectionGradeTerritoryType"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="FirefightersPerFireStation">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="FullTime" type="xsd:integer"/>
+						<xsd:element name="Volunteer" type="xsd:integer"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="TankerCapacityImperialGallons" type="xsd:integer"/>
+			<xsd:element name="PumperFlowImperialGallonsPerMinute" type="xsd:integer"/>
+			<xsd:element name="SuperiorTankerServiceAccreditationDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="GradingDate" type="xsd:date"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="ProtectionGradeTerritoryType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{1,2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="EarthquakeCodesType">
+		<xsd:sequence>
+			<xsd:element name="EarthquakeCode" type="EarthquakeCodeType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="EarthquakeCodeType">
+		<xsd:sequence>
+			<xsd:element name="Zone" type="xsd:string"/>
+			<xsd:element name="Description" type="xsd:string"/>
+			<xsd:element name="SystemName" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="HydrantCountsType">
+		<xsd:sequence>
+			<xsd:element name="HydrantCount" type="HydrantCountType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="HydrantCountType">
+		<xsd:sequence>
+			<xsd:element name="RadiusMetres" type="HydrantRadiusMetresType"/>
+			<xsd:element name="NumberOfHydrants" type="xsd:integer"/>
+			<xsd:element name="Ownership" type="HydrantOwnershipType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="HydrantRadiusMetresType">
+		<xsd:restriction base="xsd:integer">
+			<xsd:enumeration value="150"/>
+			<xsd:enumeration value="300"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="HydrantOwnershipType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Public"/>
+			<xsd:enumeration value="Private"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+</xsd:schema>

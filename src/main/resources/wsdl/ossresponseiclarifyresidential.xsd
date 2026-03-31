@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponsebuildingimagery.xsd"/>
+
+    <xsd:complexType name="iClarifyResidentialProductType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="ConstructionFeatures" type="ResponseResidentialConstructionFeaturesType"/>
+                    <xsd:element name="Valuation" type="ValuationType"/>
+                    <xsd:element name="Images" type="ImagesType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="ImagesType">
+        <xsd:sequence>
+            <xsd:element name="Image" type="ResidentialImageType" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ValuationType">
+        <xsd:sequence>
+            <xsd:element name="ReplacementCost" type="xsd:double"/>
+            <xsd:element name="CostPerSquareFoot" type="xsd:double"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseResidentialConstructionFeaturesType">
+        <xsd:sequence>
+            <xsd:element name="YearBuilt" type="YearBuiltType"/>
+            <xsd:element name="SquareFootage" type="SquareFootageType"/>
+            <xsd:element name="FoundationType" type="FoundationType"/>
+            <xsd:element name="ArchitecturalStyleType" type="ArchitecturalStyleType"/>
+            <xsd:element name="StoreyCount" type="ResidentialStoreyCountType"/>
+            <xsd:element name="KitchenCount" type="ResidentialKitchenCountType"/>
+            <xsd:element name="BathroomCount" type="ResidentialBathroomCountType"/>
+            <xsd:element name="ExteriorWallType" type="ExteriorWallType"/>
+            <xsd:element name="RoofType" type="RoofType"/>
+            <xsd:element name="FinishedBasement" type="FinishedBasementType"/>
+            <xsd:element name="GarageType" type="GarageType" minOccurs="0"/>
+            <xsd:element name="GarageNumberOfCars" type="GarageNumberOfCarsType" minOccurs="0"/>
+            <xsd:element name="SwimmingPoolType" type="SwimmingPoolType"/>
+            <xsd:element name="PrimaryHeatingType" type="PrimaryHeatingType" minOccurs="0"/>
+            <xsd:element name="AuxiliaryHeatingType" type="AuxiliaryHeatingType" minOccurs="0"/>
+            <xsd:element name="PlumbingType" type="PlumbingType" minOccurs="0"/>
+            <xsd:element name="CommercialIndicator" type="xsd:boolean"/>
+            <xsd:element name="OutbuildingPresent" type="BooleanWithUnknownType"/>
+            <xsd:element name="InspectionDetails" type="InspectionDetailsType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:mockService id="7b2fe9c4-d31a-4adb-9b58-fc3ff0967f61" port="8088" path="/mockOptaSingleServiceBinding" host="XDPYYZ0113" name="OptaSingleServiceBinding MockService" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting></con:settings><con:properties/><con:mockOperation name="call" id="d01fcf4f-6e93-4dc4-bf34-62828e6803a7" interface="OptaSingleServiceBinding" operation="call"><con:settings/><con:defaultResponse>Response 1</con:defaultResponse><con:dispatchStyle>SEQUENCE</con:dispatchStyle><con:response name="Response 1" id="c4ed867d-be30-4d0e-9fdb-2e5421d103cd" httpResponseStatus="200" encoding="UTF-8"><con:settings/><con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <OSSResponse xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+         <ResponseHeader>
+            <RequestID>12345</RequestID>
+            <RequestReceivedTimestamp>2016-07-06T20:15:41.644</RequestReceivedTimestamp>
+            <ResponseSentTimestamp>2016-07-06T20:15:42.735</ResponseSentTimestamp>
+            <ElapsedMilliseconds>1090</ElapsedMilliseconds>
+            <ServiceVersion>1.0</ServiceVersion>
+         </ResponseHeader>
+         <ResponseBody>
+            <Result>
+               <Address>
+                  <AddressID>1</AddressID>
+                  <OptaAddressKey>00A-00A-00J</OptaAddressKey>
+                  <StreetNumber>440</StreetNumber>
+                  <StreetName>Sauve</StreetName>
+                  <StreetType>Crescent</StreetType>
+                  <Municipality>Waterloo</Municipality>
+                  <Province>ON</Province>
+                  <PostalCode>N2T2Y8</PostalCode>
+               </Address>
+               <ProductResults>
+                  <PerilScoreProduct>
+                     <StatusCode>Success</StatusCode>
+                     <ServiceMode>ComparativeRater</ServiceMode>
+                     <Perils>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>30</LossCode>
+                              <LossCode>Water Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>31</LossCode>
+                              <LossCode>Water Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>39</LossCode>
+                              <LossCode>Sewer Backup</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           OSS Web Service Developers Guide
+Page 57 of 90 9/8/2017
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>10</LossCode>
+                              <LossCode>Fire Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>11</LossCode>
+                              <LossCode>Fire Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>20</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>21</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>29</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Special, T.V. Aerials, etc.</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>40</LossCode>
+                              <LossCode>Burglary/Theft - On Premises Loss</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>41</LossCode>
+                              <LossCode>Burglary/Theft - Off Premises Loss</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>49</LossCode>
+                              <LossCode>Burglary/Theft - Special, Mysterious Disappearances, etc.</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           OSS Web Service Developers Guide
+Page 58 of 90 9/8/2017
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                     </Perils>
+                  </PerilScoreProduct>
+                  <FloodScoreProduct>
+                     <StatusCode>Success</StatusCode>
+                     <ServiceMode>ComparativeRater</ServiceMode>
+                     <Perils>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>37</LossCode>
+                              <LossCode>Fluvial Flood</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>fff666</CoverageCode>
+                           <Premium>999.99</Premium>
+                           <RateFactor>3.14159265358979</RateFactor>
+                           <Deductible>5000</Deductible>
+                           <Limit>1000000</Limit>
+                           <AverageAnnualLossValues>
+                              <Building>1.1</Building>
+                              <Contents>0.9</Contents>
+                           </AverageAnnualLossValues>
+                        </Peril>
+                     </Perils>
+                  </FloodScoreProduct>
+               </ProductResults>
+            </Result>
+            <Result>
+               <Address>
+                  <AddressID>2</AddressID>
+                  <OptaAddressKey>00A-00A-00R</OptaAddressKey>
+                  <StreetNumber>3202</StreetNumber>
+                  <StreetName>Tania</StreetName>
+                  <StreetType>Crescent</StreetType>
+                  <Municipality>Burlington</Municipality>
+                  <Province>ON</Province>
+                  <PostalCode>L7M3M7</PostalCode>
+               </Address>
+               <ProductResults>
+                  <PerilScoreProduct>
+                     <StatusCode>Success</StatusCode>
+                     <ServiceMode>ComparativeRater</ServiceMode>
+                     <Perils>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>30</LossCode>
+                              <LossCode>Water Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           OSS Web Service Developers Guide
+Page 59 of 90 9/8/2017
+                           <KindOfLoss>
+                              <LossCode>31</LossCode>
+                              <LossCode>Water Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>39</LossCode>
+                              <LossCode>Sewer Backup</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>10</LossCode>
+                              <LossCode>Fire Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>11</LossCode>
+                              <LossCode>Fire Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>20</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>21</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>29</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Special, T.V. Aerials, etc.</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        OSS Web Service Developers Guide
+Page 60 of 90 9/8/2017
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>40</LossCode>
+                              <LossCode>Burglary/Theft - On Premises Loss</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>41</LossCode>
+                              <LossCode>Burglary/Theft - Off Premises Loss</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>49</LossCode>
+                              <LossCode>Burglary/Theft - Special, Mysterious Disappearances, etc.</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                     </Perils>
+                  </PerilScoreProduct>
+                  <FloodScoreProduct>
+                     <StatusCode>Success</StatusCode>
+                     <ServiceMode>ComparativeRater</ServiceMode>
+                     <Perils>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>37</LossCode>
+                              <LossCode>Fluvial Flood</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>fff666</CoverageCode>
+                           <Premium>999.99</Premium>
+                           <RateFactor>3.14159265358979</RateFactor>
+                           <Deductible>5000</Deductible>
+                           <Limit>1000000</Limit>
+                           <AverageAnnualLossValues>
+                              <Building>1.1</Building>
+                              <Contents>0.9</Contents>
+                           </AverageAnnualLossValues>
+                        </Peril>
+                     </Perils>
+                  </FloodScoreProduct>
+               </ProductResults>
+            </Result>
+            <Result>
+               <Address>
+                  <AddressID>3</AddressID>
+               </Address>
+               OSS Web Service Developers Guide
+Page 61 of 90 9/8/2017
+               <Message>Invalid address 3: 123 Fake St, Phonyville ZZ, AA11BB22CC33</Message>
+            </Result>
+            <Result>
+               <Address>
+                  <AddressID>4</AddressID>
+                  <OptaAddressKey>00A-00A-00Q</OptaAddressKey>
+                  <StreetNumber>815</StreetNumber>
+                  <StreetName>Butternut</StreetName>
+                  <StreetType>Avenue</StreetType>
+                  <Municipality>Waterloo</Municipality>
+                  <Province>ON</Province>
+                  <PostalCode>N2V2M3</PostalCode>
+               </Address>
+               <ProductResults>
+                  <PerilScoreProduct>
+                     <StatusCode>Success</StatusCode>
+                     <ServiceMode>ComparativeRater</ServiceMode>
+                     <Perils>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>30</LossCode>
+                              <LossCode>Water Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>31</LossCode>
+                              <LossCode>Water Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>39</LossCode>
+                              <LossCode>Sewer Backup</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>10</LossCode>
+                              <LossCode>Fire Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>11</LossCode>
+                              <LossCode>Fire Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           OSS Web Service Developers Guide
+Page 62 of 90 9/8/2017
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>20</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Standard, Buildings</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>21</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Standard, Contents</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>29</LossCode>
+                              <LossCode>Wind &amp; Hail Damage - Special, T.V. Aerials, etc.</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>40</LossCode>
+                              <LossCode>Burglary/Theft - On Premises Loss</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>41</LossCode>
+                              <LossCode>Burglary/Theft - Off Premises Loss</LossCode>
+                           </KindOfLoss>
+                           <KindOfLoss>
+                              <LossCode>49</LossCode>
+                              <LossCode>Burglary/Theft - Special, Mysterious Disappearances, etc.</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                        <Peril>
+                           <CoverageCode>abc123</CoverageCode>
+                           <Premium>1234.56</Premium>
+                           <RateFactor>1.25</RateFactor>
+                           <Deductible>1000</Deductible>
+                           <Limit>250000</Limit>
+                        </Peril>
+                     </Perils>
+                  </PerilScoreProduct>
+                  <FloodScoreProduct>
+                     <StatusCode>Success</StatusCode>
+                     <ServiceMode>ComparativeRater</ServiceMode>
+                     OSS Web Service Developers Guide
+Page 63 of 90 9/8/2017
+                     <Perils>
+                        <Peril>
+                           <KindOfLoss>
+                              <LossCode>37</LossCode>
+                              <LossCode>Fluvial Flood</LossCode>
+                           </KindOfLoss>
+                           <CoverageCode>fff666</CoverageCode>
+                           <Premium>999.99</Premium>
+                           <RateFactor>3.14159265358979</RateFactor>
+                           <Deductible>5000</Deductible>
+                           <Limit>1000000</Limit>
+                           <AverageAnnualLossValues>
+                              <Building>1.1</Building>
+                              <Contents>0.9</Contents>
+                           </AverageAnnualLossValues>
+                        </Peril>
+                     </Perils>
+                  </FloodScoreProduct>
+               </ProductResults>
+            </Result>
+         </ResponseBody>
+      </OSSResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callResponse"/></con:response><con:dispatchConfig/></con:mockOperation></con:mockService>
