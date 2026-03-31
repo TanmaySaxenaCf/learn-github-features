@@ -36,6 +36,16 @@ public class TaskController {
         return taskService.getTasksByStatus(status);
     }
 
+    @GetMapping("/priority/{priority}")
+    public List<Task> getTasksByPriority(@PathVariable Task.Priority priority) {
+        return taskService.getTasksByPriority(priority);
+    }
+
+    @GetMapping("/overdue")
+    public List<Task> getOverdueTasks() {
+        return taskService.getOverdueTasks();
+    }
+
     @PostMapping
     public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
         Task created = taskService.createTask(task);

@@ -3,6 +3,7 @@ package com.example.taskmanager.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,11 +24,20 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Status status = Status.TODO;
 
+    private LocalDate dueDate;
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public enum Status {
         TODO, IN_PROGRESS, DONE
+    }
+
+    public enum Priority {
+        LOW, MEDIUM, HIGH, CRITICAL
     }
 
     @PrePersist
@@ -58,4 +68,10 @@ public class Task {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
+
+    public Priority getPriority() { return priority; }
+    public void setPriority(Priority priority) { this.priority = priority; }
 }
