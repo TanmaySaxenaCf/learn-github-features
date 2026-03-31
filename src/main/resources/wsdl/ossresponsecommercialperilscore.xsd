@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="PerilScoresTypes">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="AllPerilsScore" type="CommercialPerilScoreType" minOccurs="0"/>
+                    <xsd:element name="PropertyPerilScores" type="PropertyCommercialPerilsType" minOccurs="0"/>
+                    <xsd:element name="CasualtyPerilScores" type="CasualtyCommercialPerilsType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="CommercialPerilScoreType">
+        <xsd:sequence>
+            <xsd:element name="LossCostScore" type="xsd:integer"/>
+            <xsd:element name="PredictedLossCost" type="xsd:double"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyCommercialPerilsType">
+        <xsd:sequence>
+            <xsd:element name="Peril" type="PropertyCommercialPerilScoreType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CasualtyCommercialPerilsType">
+        <xsd:sequence>
+            <xsd:element name="Peril" type="CasualtyCommercialPerilScoreType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyCommercialPerilScoreType">
+        <xsd:complexContent>
+            <xsd:extension base="CommercialPerilScoreType">
+                <xsd:sequence>
+                    <xsd:element name="PerilType" type="PropertyCommercialPerilType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="CasualtyCommercialPerilScoreType">
+        <xsd:complexContent>
+            <xsd:extension base="CommercialPerilScoreType">
+                <xsd:sequence>
+                    <xsd:element name="PerilType" type="CasualtyCommercialPerilType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="AllCommercialPerilType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="All"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="PropertyCommercialPerilType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AllProperty"/>
+            <xsd:enumeration value="Water"/>
+            <xsd:enumeration value="Fire"/>
+            <xsd:enumeration value="WindHail"/>
+            <xsd:enumeration value="Crime"/>
+            <xsd:enumeration value="OtherBusinessInterruption"/>
+            <xsd:enumeration value="VehicleImpact"/>
+            <xsd:enumeration value="OtherProperty"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="CasualtyCommercialPerilType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AllCasualty"/>
+            <xsd:enumeration value="ProductsCompletedOperations"/>
+            <xsd:enumeration value="PremisesOperations"/>
+            <xsd:enumeration value="Automobile"/>
+            <xsd:enumeration value="Employers"/>
+            <xsd:enumeration value="Professional"/>
+            <xsd:enumeration value="Pollution"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

@@ -1,0 +1,34 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="OptaAddressKeyProductType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="OptaAddressKey" type="ResponseOptaAddressKeyProductType" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseOptaAddressKeyProductType">
+        <xsd:sequence>
+            <xsd:element name="AddressID" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="OptaAddressKey" type="OptaAddressKeyType" minOccurs="0"/>
+            <xsd:element name="StreetNumber" type="StreetNumberType"/>
+            <xsd:element name="StreetName" type="StreetNameType"/>
+            <xsd:element name="StreetType" type="StreetTypeType" minOccurs="0"/>
+            <xsd:element name="StreetDirection" type="StreetDirectionType" minOccurs="0"/>
+            <xsd:element name="UnitNumber" type="UnitNumberType" minOccurs="0"/>
+            <xsd:element name="Municipality" type="MunicipalityType"/>
+            <xsd:element name="Province" type="ProvinceType"/>
+            <xsd:element name="PostalCode" type="PostalCodeType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
+

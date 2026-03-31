@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+	<xsd:complexType name="iClarifyResidentialReportProductType">
+		<xsd:complexContent>
+			<xsd:extension base="BaseProductType">
+				<xsd:sequence>
+					<xsd:element name="Report" type="ReportType"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+    <xsd:complexType name="ReportType">
+        <xsd:sequence>
+            <xsd:element name="Description" type="xsd:string" />
+            <xsd:element name="Content" type="ContentType" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>
