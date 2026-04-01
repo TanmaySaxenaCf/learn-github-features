@@ -2,9 +2,9 @@
 # RE/FE Pipeline — Orchestration Workflow
 # ============================================================
 # Triggered when an issue is opened/labeled with "re-fe-pipeline".
-# Parses the issue body, validates the folder, posts structured
-# Copilot instructions referencing all 10 RE templates + FE template
-# + testgen framework, then assigns Copilot coding agent.
+# Parses the issue body, validates the source folder, then creates
+# a focused Phase 1 child issue and assigns Copilot to it.
+# Subsequent phases are chained via re-fe-chain.yml.
 
 name: "RE/FE Pipeline — Orchestrator"
 
@@ -14,259 +14,155 @@ on:
 
 jobs:
   orchestrate:
-    name: Parse Issue & Assign Copilot
+    name: Parse Issue & Launch Phase 1
     runs-on: ubuntu-latest
 
-    # Only run if the issue has the re-fe-pipeline label
-    if: contains(github.event.issue.labels.*.name, 're-fe-pipeline')
+    if: |
+      contains(github.event.issue.labels.*.name, 're-fe-pipeline') &&
+      !contains(github.event.issue.labels.*.name, 'pipeline-running')
 
     permissions:
       issues: write
       contents: read
 
     steps:
-      # ── Step 1: Parse the issue body to extract inputs ──
-      - name: Extract pipeline inputs
-        id: parse
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse, validate, and create Phase 1 issue
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('fs');
             const body = context.payload.issue.body || '';
+            const parentIssue = context.issue.number;
 
-            // Parse source folder from the issue form
+            // ── Parse inputs from issue body ──
             const folderMatch = body.match(/### Source Folder Path\s*\n\s*(.+)/);
             const serviceMatch = body.match(/### Service Name\s*\n\s*(.+)/);
             const typeMatch = body.match(/### Service Type\s*\n\s*(.+)/);
             const contextMatch = body.match(/### Additional Context\s*\n\s*([\s\S]*?)(?=\n### |$)/);
 
-            // Parse pipeline stage checkboxes
-            const reChecked = body.includes('[X] 📖 Reverse Engineering') || body.includes('[x] 📖 Reverse Engineering');
-            const feChecked = body.includes('[X] 🏗️ Forward Engineering') || body.includes('[x] 🏗️ Forward Engineering');
-            const testChecked = body.includes('[X] 🧪 Testing') || body.includes('[x] 🧪 Testing');
+            const reChecked = /\[X\].*Reverse Engineering/i.test(body);
+            const feChecked = /\[X\].*Forward Engineering/i.test(body);
+            const testChecked = /\[X\].*Testing/i.test(body);
 
             const sourceFolder = folderMatch ? folderMatch[1].trim() : '';
             const serviceName = serviceMatch ? serviceMatch[1].trim() : '';
             const serviceType = typeMatch ? typeMatch[1].trim() : '';
-            const additionalContext = contextMatch ? contextMatch[1].trim() : 'None provided';
+            const additionalContext = contextMatch ? contextMatch[1].trim() : 'None';
 
             if (!sourceFolder || !serviceName) {
               core.setFailed('Could not parse source folder or service name from issue body');
               return;
             }
 
-            core.setOutput('source_folder', sourceFolder);
-            core.setOutput('service_name', serviceName);
-            core.setOutput('service_type', serviceType);
-            core.setOutput('additional_context', additionalContext);
-            core.setOutput('run_re', reChecked.toString());
-            core.setOutput('run_fe', feChecked.toString());
-            core.setOutput('run_test', testChecked.toString());
-
-            console.log(`Source Folder: ${sourceFolder}`);
-            console.log(`Service Name: ${serviceName}`);
-            console.log(`Stages — RE: ${reChecked}, FE: ${feChecked}, Test: ${testChecked}`);
-
-      # ── Step 2: Validate the folder exists ──
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Validate source folder exists
-        id: validate
-        run: |
-          FOLDER="${{ steps.parse.outputs.source_folder }}"
-          if [ ! -d "$FOLDER" ]; then
-            echo "::error::Source folder '$FOLDER' does not exist in the repository"
-            echo "valid=false" >> "$GITHUB_OUTPUT"
-          else
-            FILE_COUNT=$(find "$FOLDER" -name "*.java" | wc -l)
-            XML_COUNT=$(find "$FOLDER" -name "*.xml" 2>/dev/null | wc -l)
-            PROPS_COUNT=$(find "$FOLDER" -name "*.properties" -o -name "*.yml" -o -name "*.yaml" 2>/dev/null | wc -l)
-            echo "Found $FILE_COUNT Java files, $XML_COUNT XML files, $PROPS_COUNT config files in $FOLDER"
-            echo "valid=true" >> "$GITHUB_OUTPUT"
-            echo "file_count=$FILE_COUNT" >> "$GITHUB_OUTPUT"
-
-            # List all source files for the instruction comment
-            FILE_LIST=$(find "$FOLDER" \( -name "*.java" -o -name "*.xml" -o -name "*.properties" -o -name "*.yml" -o -name "*.yaml" \) | sort)
-            echo "file_list<<EOF" >> "$GITHUB_OUTPUT"
-            echo "$FILE_LIST" >> "$GITHUB_OUTPUT"
-            echo "EOF" >> "$GITHUB_OUTPUT"
-          fi
-
-      # ── Step 3: Post error if folder doesn't exist ──
-      - name: Post error comment
-        if: steps.validate.outputs.valid == 'false'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `## ❌ Pipeline Error\n\nThe source folder \`${{ steps.parse.outputs.source_folder }}\` does not exist in this repository.\n\nPlease close this issue and create a new one with a valid folder path.`
-            });
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: ['invalid']
-            });
-
-      # ── Step 4: Post detailed instructions for Copilot ──
-      - name: Post Copilot instructions
-        if: steps.validate.outputs.valid == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const sourceFolder = `${{ steps.parse.outputs.source_folder }}`;
-            const serviceName = `${{ steps.parse.outputs.service_name }}`;
-            const serviceType = `${{ steps.parse.outputs.service_type }}`;
-            const additionalContext = `${{ steps.parse.outputs.additional_context }}`;
-            const fileCount = `${{ steps.validate.outputs.file_count }}`;
-            const fileList = `${{ steps.validate.outputs.file_list }}`;
-            const issueNumber = context.issue.number;
-            const runRE = `${{ steps.parse.outputs.run_re }}` === 'true';
-            const runFE = `${{ steps.parse.outputs.run_fe }}` === 'true';
-            const runTest = `${{ steps.parse.outputs.run_test }}` === 'true';
-
-            let instructions = `## 🤖 Copilot Agent — RE/FE Pipeline Instructions
-
-            **Service**: ${serviceName} (${serviceType})
-            **Source**: \`${sourceFolder}\` (${fileCount} files)
-            **Additional Context**: ${additionalContext}
-            **Stages**: ${runRE ? '✅ RE' : '⬜ RE'} → ${runFE ? '✅ FE' : '⬜ FE'} → ${runTest ? '✅ Testing' : '⬜ Testing'}
-
-            > **IMPORTANT**: Follow the detailed instructions in \`.github/copilot-instructions.md\`. The instructions below are a summary — the copilot-instructions file is the authoritative guide.
-
-            ---
-            `;
-
-            if (runRE) {
-              instructions += `
-            ### PHASE 1 — REVERSE ENGINEERING (10 Documents)
-
-            Read ALL files in \`${sourceFolder}\` and generate **10 RE documents** under \`re-docs/${serviceName}/\` using the templates in \`.github/re-templates/\`:
-
-            | # | Template | Output |
-            |---|----------|--------|
-            | 1 | \`01-DISCOVERY-REPORT-TEMPLATE.md\` | \`re-docs/${serviceName}/01-discovery-report.md\` |
-            | 2 | \`02-COMPONENT-CATALOG-TEMPLATE.md\` | \`re-docs/${serviceName}/02-component-catalog.md\` |
-            | 3 | \`03-SEQUENCE-DIAGRAMS-TEMPLATE.md\` | \`re-docs/${serviceName}/03-sequence-diagrams.md\` |
-            | 4 | \`04-BUSINESS-RULES-CATALOG-TEMPLATE.md\` | \`re-docs/${serviceName}/04-business-rules-catalog.md\` |
-            | 5 | \`05-DATA-DICTIONARY-TEMPLATE.md\` | \`re-docs/${serviceName}/05-data-dictionary.md\` |
-            | 6 | \`06-DATA-FLOW-DIAGRAM-TEMPLATE.md\` | \`re-docs/${serviceName}/06-data-flow-diagram.md\` |
-            | 7 | \`07-BDD-FEATURE-SPECS-TEMPLATE.md\` | \`re-docs/${serviceName}/07-bdd-feature-specs.md\` |
-            | 8 | \`08-TEST-CASE-INVENTORY-TEMPLATE.md\` | \`re-docs/${serviceName}/08-test-case-inventory.md\` |
-            | 9 | \`09-GAP-REPORT-TEMPLATE.md\` | \`re-docs/${serviceName}/09-gap-report.md\` |
-            | 10 | \`10-FIELD-TO-FIELD-MAPPING-TEMPLATE.md\` | \`re-docs/${serviceName}/10-field-to-field-mapping.md\` |
-
-            **Rules**: Replace ALL placeholders. Use BR-NNN, GAP-NNN, TC-NNN, COMP-NNN numbering. Cross-reference between documents. Flag dead code and hardcoded values.
-
-            ---
-            `;
-            }
-
-            if (runFE) {
-              instructions += `
-            ### PHASE 2 — FORWARD ENGINEERING
-
-            Use \`.github/fe-templates/FORWARD_ENGINEERING_PROMPT_TEMPLATE.md\` as the guide.
-
-            1. Read ALL 10 RE documents (authoritative specs) + original source code
-            2. Create migration plan mapping each component old → new
-            3. Generate modernized code under \`forward-engineered/${serviceName}/\`
-            4. Preserve ALL business rules (BR-NNN), fix ALL gaps (GAP-NNN)
-            5. Externalize hardcoded values, remove dead code
-            6. Generate \`MIGRATION_COMPARISON_REPORT.md\` with field mapping accuracy
-
-            ---
-            `;
-            }
-
-            if (runTest) {
-              instructions += `
-            ### PHASE 3 — TESTING (testgen Framework)
-
-            Use the testgen framework bundled at \`tools/testgen/\`:
-
-            \`\`\`bash
-            pip install -e tools/testgen/
-            testgen discover .
-            testgen validate .
-            testgen fix-pom .
-            testgen junit .
-            testgen wiremock .
-            testgen behavioral . --re-docs re-docs/${serviceName}/
-            testgen postman .
-            testgen run .
-            testgen report .
-            \`\`\`
-
-            Also generate manual contract tests under \`src/test/java/.../contract/${serviceName}ContractTest.java\`.
-
-            ---
-            `;
-            }
-
-            instructions += `
-            ### OUTPUT REQUIREMENTS
-
-            - **Branch**: \`re-fe/${serviceName}-${issueNumber}\`
-            - **PR title**: \`[RE/FE Pipeline] ${serviceName} — #${issueNumber}\`
-            - **PR close**: \`Closes #${issueNumber}\`
-            - **PR label**: \`re-fe-pipeline\`
-
-            ### SOURCE FILES TO ANALYZE
-
-            \`\`\`
-            ${fileList}
-            \`\`\`
-            `;
-
-            // Clean leading whitespace from template literal
-            instructions = instructions.replace(/^            /gm, '');
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: instructions
-            });
-
-      # ── Step 5: Assign Copilot to the issue ──
-      - name: Assign Copilot agent
-        if: steps.validate.outputs.valid == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // Assign Copilot coding agent to the issue
-            try {
-              await github.rest.issues.addAssignees({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                assignees: ['copilot']
-              });
-              console.log('Copilot assigned to issue');
-            } catch (error) {
-              console.log(`Note: Could not auto-assign copilot (${error.message}). Assign manually via @copilot.`);
-              // Post fallback comment
+            // ── Validate folder exists ──
+            if (!fs.existsSync(sourceFolder)) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: '> ⚠️ **Action Required**: Auto-assignment of Copilot could not be completed. Please manually assign `copilot` to this issue to start the pipeline, or comment: `/assign-copilot`'
+                issue_number: parentIssue,
+                body: '## ❌ Pipeline Error\n\nSource folder `' + sourceFolder + '` does not exist in this repository.\nClose this issue and create a new one with a valid path.'
               });
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parentIssue,
+                labels: ['invalid']
+              });
+              return;
             }
 
-      # ── Step 6: Add status label ──
-      - name: Label issue as in-progress
-        if: steps.validate.outputs.valid == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
+            // ── Determine stages ──
+            const stages = [];
+            if (reChecked) stages.push('RE');
+            if (feChecked) stages.push('FE');
+            if (testChecked) stages.push('TESTING');
+
+            console.log('Service:', serviceName, '| Folder:', sourceFolder, '| Stages:', stages.join(','));
+
+            // ── Build Phase 1 issue body ──
+            const phase1Body = [
+              '<!-- PIPELINE_META',
+              'parent_issue: ' + parentIssue,
+              'service_name: ' + serviceName,
+              'source_folder: ' + sourceFolder,
+              'service_type: ' + serviceType,
+              'stages: ' + stages.join(','),
+              '-->',
+              '',
+              '## Phase 1: Reverse Engineering — Documents 1-5',
+              '',
+              '**Parent Issue**: #' + parentIssue,
+              '**Service**: ' + serviceName + ' (' + serviceType + ')',
+              '**Source Folder**: `' + sourceFolder + '`',
+              '**Context**: ' + additionalContext,
+              '',
+              '---',
+              '',
+              '### Instructions',
+              '',
+              'Read `.github/copilot-phase-instructions/phase1-re-docs-1-5.md` for detailed rules.',
+              '',
+              '### Task',
+              '',
+              'Analyze all source files in `' + sourceFolder + '` and generate **5 RE documents**:',
+              '',
+              '| # | Read Template | Generate Output |',
+              '|---|--------------|-----------------|',
+              '| 1 | `.github/re-templates/01-DISCOVERY-REPORT-TEMPLATE.md` | `re-docs/' + serviceName + '/01-discovery-report.md` |',
+              '| 2 | `.github/re-templates/02-COMPONENT-CATALOG-TEMPLATE.md` | `re-docs/' + serviceName + '/02-component-catalog.md` |',
+              '| 3 | `.github/re-templates/03-SEQUENCE-DIAGRAMS-TEMPLATE.md` | `re-docs/' + serviceName + '/03-sequence-diagrams.md` |',
+              '| 4 | `.github/re-templates/04-BUSINESS-RULES-CATALOG-TEMPLATE.md` | `re-docs/' + serviceName + '/04-business-rules-catalog.md` |',
+              '| 5 | `.github/re-templates/05-DATA-DICTIONARY-TEMPLATE.md` | `re-docs/' + serviceName + '/05-data-dictionary.md` |',
+              '',
+              '### Output',
+              '',
+              '- **Branch**: `re-fe/' + serviceName + '-phase1-' + parentIssue + '`',
+              '- **PR Title**: `[RE/FE Phase 1] ' + serviceName + ' — RE Docs 1-5 (#' + parentIssue + ')`',
+              '- **PR Labels**: `re-fe-pipeline`, `re-fe-phase1`',
+              '- **PR Body**: Include `Closes #ISSUE_NUMBER` (replace ISSUE_NUMBER with this issue\'s number)',
+            ].join('\n');
+
+            // ── Create Phase 1 issue ──
+            const phase1 = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '[RE/FE Phase 1] ' + serviceName + ' — RE Docs 1-5 (parent #' + parentIssue + ')',
+              body: phase1Body,
+              labels: ['re-fe-pipeline', 're-fe-phase1'],
+              assignees: ['copilot']
+            });
+
+            console.log('Created Phase 1 issue #' + phase1.data.number);
+
+            // ── Determine total phases ──
+            let phaseRows = '| 1 | RE Docs 1-5 | #' + phase1.data.number + ' | 🔄 In Progress |\n';
+            phaseRows += '| 2 | RE Docs 6-10 | _After Phase 1_ | ⏳ Pending |\n';
+            if (stages.includes('FE')) {
+              phaseRows += '| 3 | Forward Engineering | _After Phase 2_ | ⏳ Pending |\n';
+            }
+            if (stages.includes('TESTING')) {
+              phaseRows += '| 4 | Testing | _After Phase 3_ | ⏳ Pending |\n';
+            }
+
+            // ── Post tracking comment on parent issue ──
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: parentIssue,
+              body: '## 🚀 Pipeline Started — Phased Execution\n\n' +
+                'The pipeline runs in phases. Each phase creates a PR. When merged, the next phase starts automatically.\n\n' +
+                '| Phase | Scope | Issue | Status |\n' +
+                '|-------|-------|-------|--------|\n' +
+                phaseRows
+            });
+
+            // ── Label parent as running ──
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: parentIssue,
               labels: ['pipeline-running']
             });

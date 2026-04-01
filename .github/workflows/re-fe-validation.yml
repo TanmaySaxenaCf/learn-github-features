@@ -1,12 +1,12 @@
 # ============================================================
 # RE/FE Pipeline — PR Validation Workflow
 # ============================================================
-# Runs on PRs created by the RE/FE pipeline to validate:
-# 1. All 10 RE documents are present and non-empty
-# 2. Forward-engineered code exists
-# 3. Project compiles
-# 4. All tests pass (existing + new contract + testgen-generated)
-# 5. testgen report exists
+# Runs on PRs created by the RE/FE pipeline to validate
+# phase-specific artifacts:
+# - Phase 1: RE docs 1-5 exist and are non-empty
+# - Phase 2: RE docs 6-10 exist and are non-empty
+# - Phase 3: Forward-engineered code exists, project compiles
+# - Phase 4: Tests exist and pass
 
 name: "RE/FE Pipeline — PR Validation"
 
@@ -17,10 +17,10 @@ on:
 
 jobs:
   validate:
-    name: Validate RE/FE Pipeline Output
+    name: Validate Phase Artifacts
     runs-on: ubuntu-latest
 
-    # Only run on RE/FE pipeline PRs (branch name starts with re-fe/)
+    # Only run on RE/FE pipeline PRs
     if: startsWith(github.head_ref, 're-fe/')
 
     permissions:
@@ -32,72 +32,96 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Detect phase from branch
+        id: detect
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if [[ "$BRANCH" =~ -phase([0-9]+)- ]]; then
+            echo "phase=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "phase=0" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Detected phase: ${BASH_REMATCH[1]:-unknown}"
+
       - name: Set up JDK 21
+        if: steps.detect.outputs.phase == '3' || steps.detect.outputs.phase == '4'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # ── Validation 1: Check all 10 RE docs exist ──
-      - name: Validate RE documents
-        id: check-docs
+      # ── Phase 1: Validate RE docs 1-5 ──
+      - name: Validate RE docs 1-5
+        if: steps.detect.outputs.phase == '1'
+        id: check-phase1
         run: |
-          echo "## RE Document Validation" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Phase 1 — RE Docs 1-5 Validation" >> "$GITHUB_STEP_SUMMARY"
 
-          RE_TEMPLATES=(
-            "01-discovery-report"
-            "02-component-catalog"
-            "03-sequence-diagrams"
-            "04-business-rules-catalog"
-            "05-data-dictionary"
-            "06-data-flow-diagram"
-            "07-bdd-feature-specs"
-            "08-test-case-inventory"
-            "09-gap-report"
-            "10-field-to-field-mapping"
-          )
+          DOCS=("01-discovery-report" "02-component-catalog" "03-sequence-diagrams" "04-business-rules-catalog" "05-data-dictionary")
+          FOUND=0
+          MISSING=0
 
-          DOCS_FOUND=0
-          DOCS_MISSING=0
-          DOCS_DETAIL=""
+          echo "| Status | Document | Details |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|----------|---------|" >> "$GITHUB_STEP_SUMMARY"
 
-          if [ -d "re-docs" ]; then
-            for doc in "${RE_TEMPLATES[@]}"; do
-              FOUND=$(find re-docs -name "${doc}.md" | head -1)
-              if [ -n "$FOUND" ] && [ -s "$FOUND" ]; then
-                LINES=$(wc -l < "$FOUND")
-                DOCS_DETAIL="${DOCS_DETAIL}\n| ✅ | ${doc}.md | ${LINES} lines |"
-                DOCS_FOUND=$((DOCS_FOUND + 1))
-              else
-                DOCS_DETAIL="${DOCS_DETAIL}\n| ❌ | ${doc}.md | Missing or empty |"
-                DOCS_MISSING=$((DOCS_MISSING + 1))
-              fi
-            done
-          else
-            echo "⚠️ No re-docs/ directory found" >> "$GITHUB_STEP_SUMMARY"
-            DOCS_MISSING=10
-          fi
+          for doc in "${DOCS[@]}"; do
+            FILE=$(find re-docs -name "${doc}.md" 2>/dev/null | head -1)
+            if [ -n "$FILE" ] && [ -s "$FILE" ]; then
+              LINES=$(wc -l < "$FILE")
+              echo "| ✅ | ${doc}.md | ${LINES} lines |" >> "$GITHUB_STEP_SUMMARY"
+              FOUND=$((FOUND + 1))
+            else
+              echo "| ❌ | ${doc}.md | Missing or empty |" >> "$GITHUB_STEP_SUMMARY"
+              MISSING=$((MISSING + 1))
+            fi
+          done
 
-          echo -e "| Status | Document | Details |\n|--------|----------|---------|${DOCS_DETAIL}" >> "$GITHUB_STEP_SUMMARY"
-          echo "docs_found=$DOCS_FOUND" >> "$GITHUB_OUTPUT"
-          echo "docs_missing=$DOCS_MISSING" >> "$GITHUB_OUTPUT"
+          echo "found=$FOUND" >> "$GITHUB_OUTPUT"
+          echo "missing=$MISSING" >> "$GITHUB_OUTPUT"
 
-      # ── Validation 2: Check forward-engineered code exists ──
-      - name: Validate forward-engineered code
-        id: check-fe
+      # ── Phase 2: Validate RE docs 6-10 ──
+      - name: Validate RE docs 6-10
+        if: steps.detect.outputs.phase == '2'
+        id: check-phase2
         run: |
-          echo "## Forward Engineering Validation" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Phase 2 — RE Docs 6-10 Validation" >> "$GITHUB_STEP_SUMMARY"
+
+          DOCS=("06-data-flow-diagram" "07-bdd-feature-specs" "08-test-case-inventory" "09-gap-report" "10-field-to-field-mapping")
+          FOUND=0
+          MISSING=0
+
+          echo "| Status | Document | Details |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|----------|---------|" >> "$GITHUB_STEP_SUMMARY"
+
+          for doc in "${DOCS[@]}"; do
+            FILE=$(find re-docs -name "${doc}.md" 2>/dev/null | head -1)
+            if [ -n "$FILE" ] && [ -s "$FILE" ]; then
+              LINES=$(wc -l < "$FILE")
+              echo "| ✅ | ${doc}.md | ${LINES} lines |" >> "$GITHUB_STEP_SUMMARY"
+              FOUND=$((FOUND + 1))
+            else
+              echo "| ❌ | ${doc}.md | Missing or empty |" >> "$GITHUB_STEP_SUMMARY"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+
+          echo "found=$FOUND" >> "$GITHUB_OUTPUT"
+          echo "missing=$MISSING" >> "$GITHUB_OUTPUT"
+
+      # ── Phase 3: Validate forward-engineered code ──
+      - name: Validate FE code
+        if: steps.detect.outputs.phase == '3'
+        id: check-phase3
+        run: |
+          echo "## Phase 3 — Forward Engineering Validation" >> "$GITHUB_STEP_SUMMARY"
 
           if [ -d "forward-engineered" ]; then
             FE_COUNT=$(find forward-engineered -name "*.java" | wc -l)
             REPORT=$(find forward-engineered -name "MIGRATION_COMPARISON_REPORT.md" | head -1)
             echo "✅ Found $FE_COUNT forward-engineered Java files" >> "$GITHUB_STEP_SUMMARY"
+            echo "fe_count=$FE_COUNT" >> "$GITHUB_OUTPUT"
+
             if [ -n "$REPORT" ]; then
               echo "✅ Migration comparison report found" >> "$GITHUB_STEP_SUMMARY"
               echo "has_report=true" >> "$GITHUB_OUTPUT"
@@ -105,41 +129,16 @@ jobs:
               echo "⚠️ Migration comparison report missing" >> "$GITHUB_STEP_SUMMARY"
               echo "has_report=false" >> "$GITHUB_OUTPUT"
             fi
-            echo "fe_count=$FE_COUNT" >> "$GITHUB_OUTPUT"
           else
-            echo "⚠️ No forward-engineered/ directory found" >> "$GITHUB_STEP_SUMMARY"
+            echo "❌ No forward-engineered/ directory found" >> "$GITHUB_STEP_SUMMARY"
             echo "fe_count=0" >> "$GITHUB_OUTPUT"
             echo "has_report=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # ── Validation 3: Check test files ──
-      - name: Validate test generation
-        id: check-tests
-        run: |
-          echo "## Test Validation" >> "$GITHUB_STEP_SUMMARY"
-
-          CONTRACT=$(find src/test -name "*ContractTest.java" 2>/dev/null | wc -l)
-          AUTOTEST=$(find src/test -path "*/autotest/*.java" 2>/dev/null | wc -l)
-          BEHAVIORAL=$(find src/test -path "*/behavioral/*.java" 2>/dev/null | wc -l)
-          TOTAL_NEW=$((CONTRACT + AUTOTEST + BEHAVIORAL))
-
-          echo "| Category | Count |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|----------|-------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Contract tests | $CONTRACT |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| testgen unit tests | $AUTOTEST |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| testgen behavioral tests | $BEHAVIORAL |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| **Total new tests** | **$TOTAL_NEW** |" >> "$GITHUB_STEP_SUMMARY"
-
-          echo "contract_tests=$CONTRACT" >> "$GITHUB_OUTPUT"
-          echo "autotest_count=$AUTOTEST" >> "$GITHUB_OUTPUT"
-          echo "behavioral_count=$BEHAVIORAL" >> "$GITHUB_OUTPUT"
-          echo "total_tests=$TOTAL_NEW" >> "$GITHUB_OUTPUT"
-
-      # ── Validation 4: Build the project ──
-      - name: Build project
+      - name: Build project (Phase 3)
+        if: steps.detect.outputs.phase == '3'
         id: build
         run: |
-          echo "## Build Validation" >> "$GITHUB_STEP_SUMMARY"
           if mvn compile --batch-mode --no-transfer-progress 2>&1; then
             echo "✅ Build successful" >> "$GITHUB_STEP_SUMMARY"
             echo "build_status=success" >> "$GITHUB_OUTPUT"
@@ -148,11 +147,34 @@ jobs:
             echo "build_status=failure" >> "$GITHUB_OUTPUT"
           fi
 
-      # ── Validation 5: Run all tests ──
-      - name: Run tests
+      # ── Phase 4: Validate tests ──
+      - name: Validate test files
+        if: steps.detect.outputs.phase == '4'
+        id: check-phase4
+        run: |
+          echo "## Phase 4 — Test Validation" >> "$GITHUB_STEP_SUMMARY"
+
+          CONTRACT=$(find src/test -name "*ContractTest.java" 2>/dev/null | wc -l)
+          AUTOTEST=$(find src/test -path "*/autotest/*.java" 2>/dev/null | wc -l)
+          BEHAVIORAL=$(find src/test -path "*/behavioral/*.java" 2>/dev/null | wc -l)
+          TOTAL=$((CONTRACT + AUTOTEST + BEHAVIORAL))
+
+          echo "| Category | Count |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|----------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Contract tests | $CONTRACT |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| testgen unit tests | $AUTOTEST |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| testgen behavioral tests | $BEHAVIORAL |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Total new tests** | **$TOTAL** |" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "contract=$CONTRACT" >> "$GITHUB_OUTPUT"
+          echo "autotest=$AUTOTEST" >> "$GITHUB_OUTPUT"
+          echo "behavioral=$BEHAVIORAL" >> "$GITHUB_OUTPUT"
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+
+      - name: Run tests (Phase 4)
+        if: steps.detect.outputs.phase == '4'
         id: test
         run: |
-          echo "## Test Execution" >> "$GITHUB_STEP_SUMMARY"
           if mvn test --batch-mode --no-transfer-progress --fail-at-end 2>&1; then
             echo "✅ All tests passed" >> "$GITHUB_STEP_SUMMARY"
             echo "test_status=success" >> "$GITHUB_OUTPUT"
@@ -161,69 +183,62 @@ jobs:
             echo "test_status=failure" >> "$GITHUB_OUTPUT"
           fi
 
-      # ── Validation 6: Upload test results ──
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: re-fe-test-results
-          path: |
-            target/surefire-reports/
-            reports/
-          retention-days: 14
-
       # ── Post validation summary as PR comment ──
       - name: Post validation summary
         if: always()
         uses: actions/github-script@v7
         with:
           script: |
-            const docsFound = '${{ steps.check-docs.outputs.docs_found }}';
-            const docsMissing = '${{ steps.check-docs.outputs.docs_missing }}';
-            const feCount = '${{ steps.check-fe.outputs.fe_count }}';
-            const hasReport = '${{ steps.check-fe.outputs.has_report }}';
-            const contractTests = '${{ steps.check-tests.outputs.contract_tests }}';
-            const autotestCount = '${{ steps.check-tests.outputs.autotest_count }}';
-            const behavioralCount = '${{ steps.check-tests.outputs.behavioral_count }}';
-            const totalTests = '${{ steps.check-tests.outputs.total_tests }}';
-            const buildStatus = '${{ steps.build.outputs.build_status }}';
-            const testStatus = '${{ steps.test.outputs.test_status }}';
-
+            const phase = '${{ steps.detect.outputs.phase }}';
             const icon = (ok) => ok ? '✅' : '❌';
-            const overallPass = buildStatus === 'success' && testStatus === 'success' && docsMissing === '0';
+            let body = '';
 
-            const body = `## ${icon(overallPass)} RE/FE Pipeline — Validation Report
+            if (phase === '1') {
+              const found = '${{ steps.check-phase1.outputs.found }}' || '0';
+              const missing = '${{ steps.check-phase1.outputs.missing }}' || '0';
+              const pass = missing === '0';
+              body = `## ${icon(pass)} Phase 1 — RE Docs 1-5 Validation\n\n` +
+                `| Check | Status |\n|-------|--------|\n` +
+                `| RE Documents 1-5 | ${icon(pass)} ${found}/5 found, ${missing} missing |\n\n` +
+                (pass ? '### ✅ All Phase 1 documents present — ready for review.' : '### ❌ Some documents missing — review above.');
 
-            ### Reverse Engineering Documents
-            | Check | Status | Details |
-            |-------|--------|---------|
-            | RE Documents | ${icon(docsMissing === '0')} | ${docsFound}/10 found, ${docsMissing} missing |
+            } else if (phase === '2') {
+              const found = '${{ steps.check-phase2.outputs.found }}' || '0';
+              const missing = '${{ steps.check-phase2.outputs.missing }}' || '0';
+              const pass = missing === '0';
+              body = `## ${icon(pass)} Phase 2 — RE Docs 6-10 Validation\n\n` +
+                `| Check | Status |\n|-------|--------|\n` +
+                `| RE Documents 6-10 | ${icon(pass)} ${found}/5 found, ${missing} missing |\n\n` +
+                (pass ? '### ✅ All Phase 2 documents present — ready for review.' : '### ❌ Some documents missing — review above.');
 
-            ### Forward Engineering
-            | Check | Status | Details |
-            |-------|--------|---------|
-            | FE Code | ${icon(feCount !== '0')} | ${feCount} Java files generated |
-            | Migration Report | ${icon(hasReport === 'true')} | ${hasReport === 'true' ? 'Present' : 'Missing'} |
+            } else if (phase === '3') {
+              const feCount = '${{ steps.check-phase3.outputs.fe_count }}' || '0';
+              const hasReport = '${{ steps.check-phase3.outputs.has_report }}' === 'true';
+              const buildOk = '${{ steps.build.outputs.build_status }}' === 'success';
+              const pass = feCount !== '0' && buildOk;
+              body = `## ${icon(pass)} Phase 3 — Forward Engineering Validation\n\n` +
+                `| Check | Status |\n|-------|--------|\n` +
+                `| FE Java files | ${icon(feCount !== '0')} ${feCount} files |\n` +
+                `| Migration Report | ${icon(hasReport)} ${hasReport ? 'Present' : 'Missing'} |\n` +
+                `| Build | ${icon(buildOk)} ${buildOk ? 'Success' : 'Failed'} |\n\n` +
+                (pass ? '### ✅ Forward engineering validated — ready for review.' : '### ❌ Some checks failed — review above.');
 
-            ### Testing
-            | Category | Count |
-            |----------|-------|
-            | Contract Tests | ${contractTests} |
-            | testgen Unit Tests | ${autotestCount} |
-            | testgen Behavioral Tests | ${behavioralCount} |
-            | **Total New Tests** | **${totalTests}** |
+            } else if (phase === '4') {
+              const total = '${{ steps.check-phase4.outputs.total }}' || '0';
+              const testOk = '${{ steps.test.outputs.test_status }}' === 'success';
+              const pass = total !== '0' && testOk;
+              body = `## ${icon(pass)} Phase 4 — Testing Validation\n\n` +
+                `| Check | Status |\n|-------|--------|\n` +
+                `| Contract tests | ${{ steps.check-phase4.outputs.contract }} |\n` +
+                `| testgen unit tests | ${{ steps.check-phase4.outputs.autotest }} |\n` +
+                `| Behavioral tests | ${{ steps.check-phase4.outputs.behavioral }} |\n` +
+                `| Total new tests | ${total} |\n` +
+                `| Test execution | ${icon(testOk)} ${testOk ? 'All passed' : 'Some failed'} |\n\n` +
+                (pass ? '### ✅ All tests present and passing — ready for review.' : '### ❌ Some checks failed — review above.');
 
-            ### Build & Test Execution
-            | Check | Status |
-            |-------|--------|
-            | Build | ${icon(buildStatus === 'success')} ${buildStatus} |
-            | Tests | ${icon(testStatus === 'success')} ${testStatus} |
-
-            ---
-            ${overallPass
-              ? '### ✅ All validations passed — ready for human review.'
-              : '### ❌ Some validations failed — review the issues above before approving.'}
-            `.replace(/^            /gm, '');
+            } else {
+              body = '## ℹ️ RE/FE Pipeline PR — no specific phase detected from branch name.';
+            }
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,

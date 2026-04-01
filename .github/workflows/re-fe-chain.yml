@@ -1,0 +1,267 @@
+# ============================================================
+# RE/FE Pipeline — Phase Chain Workflow
+# ============================================================
+# Fires when a phase PR is merged. Reads metadata from the
+# closed phase issue, creates the next phase's issue, and
+# assigns Copilot. Closes the parent issue after the final phase.
+
+name: "RE/FE Pipeline — Phase Chain"
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  chain-next-phase:
+    name: Chain to Next Phase
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 're-fe/')
+
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine and create next phase
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+
+            // Parse branch: re-fe/{service}-phase{N}-{parent}
+            const match = branch.match(/^re-fe\/(.+)-phase(\d+)-(\d+)$/);
+            if (!match) {
+              console.log('Branch does not match phase pattern, skipping: ' + branch);
+              return;
+            }
+
+            const serviceName = match[1];
+            const currentPhase = parseInt(match[2]);
+            const parentIssue = parseInt(match[3]);
+
+            console.log('Service:', serviceName, '| Phase:', currentPhase, '| Parent:', parentIssue);
+
+            // ── Find the phase issue this PR closes ──
+            const prBody = context.payload.pull_request.body || '';
+            const closeMatch = prBody.match(/Closes?\s+#(\d+)/i);
+            let sourceFolder = '';
+            let serviceType = '';
+            let stages = ['RE'];
+
+            if (closeMatch) {
+              const phaseIssueNumber = parseInt(closeMatch[1]);
+              const phaseIssue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: phaseIssueNumber
+              });
+
+              // Parse metadata from phase issue body
+              const metaMatch = phaseIssue.data.body.match(/<!-- PIPELINE_META\n([\s\S]*?)-->/);
+              if (metaMatch) {
+                for (const line of metaMatch[1].split('\n')) {
+                  const colonIdx = line.indexOf(':');
+                  if (colonIdx === -1) continue;
+                  const key = line.substring(0, colonIdx).trim();
+                  const val = line.substring(colonIdx + 1).trim();
+                  if (key === 'source_folder') sourceFolder = val;
+                  if (key === 'service_type') serviceType = val;
+                  if (key === 'stages') stages = val.split(',');
+                }
+              }
+            }
+
+            // Fallback: read parent issue for source folder if needed
+            if (!sourceFolder) {
+              const parentData = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parentIssue
+              });
+              const parentBody = parentData.data.body || '';
+              const folderMatch = parentBody.match(/### Source Folder Path\s*\n\s*(.+)/);
+              if (folderMatch) sourceFolder = folderMatch[1].trim();
+              const typeMatch = parentBody.match(/### Service Type\s*\n\s*(.+)/);
+              if (typeMatch) serviceType = typeMatch[1].trim();
+
+              // Parse stages from parent checkboxes
+              if (/\[X\].*Forward Engineering/i.test(parentBody)) stages.push('FE');
+              if (/\[X\].*Testing/i.test(parentBody)) stages.push('TESTING');
+            }
+
+            // ── Determine next phase ──
+            let nextPhase = null;
+
+            if (currentPhase === 1) {
+              nextPhase = 2; // Always chain RE Phase 1 → Phase 2
+            } else if (currentPhase === 2 && stages.includes('FE')) {
+              nextPhase = 3;
+            } else if (currentPhase === 3 && stages.includes('TESTING')) {
+              nextPhase = 4;
+            }
+
+            // ── If no next phase, pipeline is complete ──
+            if (!nextPhase) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parentIssue,
+                body: '## ✅ Pipeline Complete\n\nAll selected phases have been completed successfully.\n\n' +
+                  '| Phase | Status |\n|-------|--------|\n' +
+                  Array.from({length: currentPhase}, (_, i) => '| Phase ' + (i + 1) + ' | ✅ Complete |').join('\n')
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parentIssue,
+                state: 'closed'
+              });
+              console.log('Pipeline complete, parent issue #' + parentIssue + ' closed');
+              return;
+            }
+
+            // ── Build metadata block ──
+            const meta = [
+              '<!-- PIPELINE_META',
+              'parent_issue: ' + parentIssue,
+              'service_name: ' + serviceName,
+              'source_folder: ' + sourceFolder,
+              'service_type: ' + serviceType,
+              'stages: ' + stages.join(','),
+              '-->',
+            ].join('\n');
+
+            // ── Build phase-specific issue body ──
+            let title, body, label;
+
+            if (nextPhase === 2) {
+              label = 're-fe-phase2';
+              title = '[RE/FE Phase 2] ' + serviceName + ' — RE Docs 6-10 (parent #' + parentIssue + ')';
+              body = meta + '\n\n' + [
+                '## Phase 2: Reverse Engineering — Documents 6-10',
+                '',
+                '**Parent Issue**: #' + parentIssue,
+                '**Service**: ' + serviceName + ' (' + serviceType + ')',
+                '**Source Folder**: `' + sourceFolder + '`',
+                '',
+                '---',
+                '',
+                '### Instructions',
+                '',
+                'Read `.github/copilot-phase-instructions/phase2-re-docs-6-10.md` for detailed rules.',
+                '',
+                '### Task',
+                '',
+                'Analyze source files in `' + sourceFolder + '` and generate **5 more RE documents**.',
+                '**Also read** the Phase 1 docs in `re-docs/' + serviceName + '/` for cross-referencing.',
+                '',
+                '| # | Read Template | Generate Output |',
+                '|---|--------------|-----------------|',
+                '| 6 | `.github/re-templates/06-DATA-FLOW-DIAGRAM-TEMPLATE.md` | `re-docs/' + serviceName + '/06-data-flow-diagram.md` |',
+                '| 7 | `.github/re-templates/07-BDD-FEATURE-SPECS-TEMPLATE.md` | `re-docs/' + serviceName + '/07-bdd-feature-specs.md` |',
+                '| 8 | `.github/re-templates/08-TEST-CASE-INVENTORY-TEMPLATE.md` | `re-docs/' + serviceName + '/08-test-case-inventory.md` |',
+                '| 9 | `.github/re-templates/09-GAP-REPORT-TEMPLATE.md` | `re-docs/' + serviceName + '/09-gap-report.md` |',
+                '| 10 | `.github/re-templates/10-FIELD-TO-FIELD-MAPPING-TEMPLATE.md` | `re-docs/' + serviceName + '/10-field-to-field-mapping.md` |',
+                '',
+                '### Output',
+                '',
+                '- **Branch**: `re-fe/' + serviceName + '-phase2-' + parentIssue + '`',
+                '- **PR Title**: `[RE/FE Phase 2] ' + serviceName + ' — RE Docs 6-10 (#' + parentIssue + ')`',
+                '- **PR Labels**: `re-fe-pipeline`, `re-fe-phase2`',
+                '- **PR Body**: Include `Closes #ISSUE_NUMBER` (replace ISSUE_NUMBER with this issue\'s number)',
+              ].join('\n');
+
+            } else if (nextPhase === 3) {
+              label = 're-fe-phase3';
+              title = '[RE/FE Phase 3] ' + serviceName + ' — Forward Engineering (parent #' + parentIssue + ')';
+              body = meta + '\n\n' + [
+                '## Phase 3: Forward Engineering',
+                '',
+                '**Parent Issue**: #' + parentIssue,
+                '**Service**: ' + serviceName + ' (' + serviceType + ')',
+                '**Source Folder**: `' + sourceFolder + '`',
+                '',
+                '---',
+                '',
+                '### Instructions',
+                '',
+                'Read `.github/copilot-phase-instructions/phase3-forward-engineering.md` for detailed rules.',
+                '',
+                '### Task',
+                '',
+                '1. Read ALL 10 RE documents in `re-docs/' + serviceName + '/`',
+                '2. Read ALL source code in `' + sourceFolder + '`',
+                '3. Read the FE template at `.github/fe-templates/FORWARD_ENGINEERING_PROMPT_TEMPLATE.md`',
+                '4. Generate modernized Spring Boot 3.x code under `forward-engineered/' + serviceName + '/`',
+                '5. Generate `MIGRATION_COMPARISON_REPORT.md`',
+                '',
+                '### Output',
+                '',
+                '- **Branch**: `re-fe/' + serviceName + '-phase3-' + parentIssue + '`',
+                '- **PR Title**: `[RE/FE Phase 3] ' + serviceName + ' — Forward Engineering (#' + parentIssue + ')`',
+                '- **PR Labels**: `re-fe-pipeline`, `re-fe-phase3`',
+                '- **PR Body**: Include `Closes #ISSUE_NUMBER` (replace ISSUE_NUMBER with this issue\'s number)',
+              ].join('\n');
+
+            } else if (nextPhase === 4) {
+              label = 're-fe-phase4';
+              title = '[RE/FE Phase 4] ' + serviceName + ' — Testing (parent #' + parentIssue + ')';
+              body = meta + '\n\n' + [
+                '## Phase 4: Testing',
+                '',
+                '**Parent Issue**: #' + parentIssue,
+                '**Service**: ' + serviceName + ' (' + serviceType + ')',
+                '**Source Folder**: `' + sourceFolder + '`',
+                '',
+                '---',
+                '',
+                '### Instructions',
+                '',
+                'Read `.github/copilot-phase-instructions/phase4-testing.md` for detailed rules.',
+                '',
+                '### Task',
+                '',
+                '1. Install testgen: `pip install -e tools/testgen/`',
+                '2. Run `testgen discover .` then `testgen junit .`',
+                '3. Run `testgen wiremock .` (if external calls exist)',
+                '4. Run `testgen behavioral . --re-docs re-docs/' + serviceName + '/`',
+                '5. Run `testgen postman .`',
+                '6. Create contract tests under `src/test/java/.../contract/`',
+                '7. Run `testgen run .` and `testgen report .`',
+                '',
+                '### Output',
+                '',
+                '- **Branch**: `re-fe/' + serviceName + '-phase4-' + parentIssue + '`',
+                '- **PR Title**: `[RE/FE Phase 4] ' + serviceName + ' — Testing (#' + parentIssue + ')`',
+                '- **PR Labels**: `re-fe-pipeline`, `re-fe-phase4`',
+                '- **PR Body**: Include `Closes #ISSUE_NUMBER` (replace ISSUE_NUMBER with this issue\'s number)',
+              ].join('\n');
+            }
+
+            // ── Create next phase issue ──
+            const nextIssue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['re-fe-pipeline', label],
+              assignees: ['copilot']
+            });
+
+            console.log('Created Phase ' + nextPhase + ' issue #' + nextIssue.data.number);
+
+            // ── Update parent issue ──
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: parentIssue,
+              body: '## Phase ' + currentPhase + ' Complete ✅\n\n' +
+                'Phase ' + nextPhase + ' started: #' + nextIssue.data.number
+            });

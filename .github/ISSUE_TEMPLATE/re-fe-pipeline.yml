@@ -14,13 +14,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Automated Pipeline
+        ## Automated Pipeline (Phased Execution)
         Fill out this form to trigger the **Reverse Engineering → Forward Engineering → Testing** pipeline.
-        Once submitted, the pipeline will automatically:
-        1. **Reverse Engineering** — Generate 10 comprehensive RE documents (discovery report, component catalog, sequence diagrams, business rules, data dictionary, data flow diagrams, BDD specs, test case inventory, gap report, field-to-field mapping)
-        2. **Forward Engineering** — Generate modernized Spring Boot 3.x code using the FE template
-        3. **Testing** — Generate JUnit 5, WireMock, behavioral, and contract tests using the testgen framework
-        4. **Pull Request** — Open a PR with all artifacts for human review
+        The pipeline runs in **4 automated phases** — each phase creates a focused issue for Copilot, generates a PR, and chains to the next phase after merge:
+        1. **Phase 1** — RE Docs 1-5 (Discovery, Components, Sequences, Business Rules, Data Dictionary)
+        2. **Phase 2** — RE Docs 6-10 (DFD, BDD Specs, Test Cases, Gaps, Field Mapping)
+        3. **Phase 3** — Forward Engineering (modernized Spring Boot 3.x code)
+        4. **Phase 4** — Testing (JUnit, WireMock, behavioral, contract tests)
+        Each phase creates a PR for review. When merged, the next phase starts automatically.
 
   - type: input
     id: source_folder
