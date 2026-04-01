@@ -1,0 +1,124 @@
+pipeline {
+    agent any
+    //Windows agent needs to have putty (plink) installed and have access to target fabric ssh port for fabric deploy
+    //Agent needs maven installed and access to nexus also setting.xml should have nexus settings for release  
+
+    environment {
+
+        PROJECT_NAME = 'com.aviva.ca.cl-esb-fus'
+
+        PROJECT_PATH = '\\cl-esb-fus'
+        CICD_PATH = '\\ci-cd'
+        QA_PATH = '\\qa'
+        TARGET_PATH = '\\target'
+    }
+
+    stages {
+        stage('Build') {
+
+            steps {
+                script {
+                    currentBuild.result = "SUCCESS"
+                }
+
+                echo 'CICD process for CL FUS Wrapper API Project\n\n'
+                echo "Pipeline Parameters:\n \
+                   params : ${params}\n "
+
+                checkout scm
+
+                dir(env.WORKSPACE + env.PROJECT_PATH) {
+                    echo "Building and releasing java bundle package --- ${env.WORKSPACE}${env.PROJECT_PATH}"
+                    script {
+                        if (isUnix()) {
+                            sh 'mvn deploy'
+                        } else {
+                            bat 'mvn deploy'
+                        }
+                    }
+                }
+            }
+
+        }
+
+        stage('UnitTest') {
+            steps {
+                echo 'Test - unit test'
+
+            }
+        }
+
+
+        stage('Install') {
+            steps {
+                echo 'Preparing the profile and adding to container'
+                dir(env.WORKSPACE + env.PROJECT_PATH + env.CICD_PATH) { //that's where fabric.cmd file is checked out from git
+                    script {
+                        if (isUnix()) {
+                            script {
+                                String fuseCommand = readFile('fabric.cmd').trim()
+                                sh "sshpass -p ${params.fabricSshPassword} ssh -oHostKeyAlgorithms=+ssh-dss -p ${params.fabricSshPort} ${params.fabricSshUser}@${params.fabricServer} \"${fuseCommand}\""
+                            }
+                        } else {
+                            bat "plink.exe -ssh ${params.fabricServer} -v -P ${params.fabricSshPort} -l ${params.fabricSshUser} -pw ${params.fabricSshPassword} -t -m fabric.cmd"
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        /*stage('Test') {
+            steps {
+                echo 'Test - integration with SoapUI'
+                dir(env.WORKSPACE + env.PROJECT_PATH + env.CICD_PATH + QA_PATH) {
+                    script {
+                        if (isUnix()) {
+                         //sh 'mvn exec:java'
+                          //  sh 'mvn test'
+                        } else {
+                         bat "mvn exec:java"
+                          bat "mvn test"
+                        }
+                    }
+                }
+            }
+        }*/
+
+       /* stage('JUnit Results') {
+            steps {
+                echo 'Publish JUnit Test Results'
+                junit 'cl-esb-fus/ci-cd/qa/surefire-reports/fus-qa/TEST*.xml'
+            }
+        }*/
+
+
+        stage('Cleanup') {
+            steps {
+                echo 'cleanup'
+
+
+                dir(env.WORKSPACE + env.PROJECT_PATH) {
+                    script {
+                        if (fileExists('target')) {
+                            echo 'target exists .... deleting target folder'
+                            if (isUnix()) {
+                                sh 'rm -rf target'
+                            } else {
+                                bat 'DEL target /F/S/Q'
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Deployment completed'
+        }
+    }
+
+}

@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseiclarifyresidential.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponsecommercialperilscore.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseiclarifycommercialoccupancy.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseiclarifycondotenant.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponsefus.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseperilscore.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponsefloodscore.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponsebuildingimagery.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseinspectionscore.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseinspectionattributes.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseresidentialmarketvaluation.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseiclarifyresidentialreport.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponsecommercialconstructionfeatures.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseaddresssearch.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponseoptaaddresskeyproduct.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="OSSResponseType">
+        <xsd:sequence>
+            <xsd:element name="ResponseHeader" type="ResponseHeaderType"/>
+            <xsd:element name="ResponseBody" type="ResponseBodyType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseHeaderType">
+        <xsd:sequence>
+            <xsd:element name="RequestID" type="xsd:string"/>
+            <xsd:element name="RequestReceivedTimestamp" type="xsd:dateTime"/>
+            <xsd:element name="ResponseSentTimestamp" type="xsd:dateTime"/>
+            <xsd:element name="ElapsedMilliseconds" type="xsd:integer"/>
+            <xsd:element name="ServiceVersion" type="xsd:string"/>
+            <xsd:element name="Request" type="AnyType" minOccurs="0"/>
+            <xsd:element name="MachineName" type="xsd:string"/>
+            <xsd:element name="Session" type="xsd:string"/>
+            <xsd:element name="NodeName" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Debug" type="AnyType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseBodyType">
+        <xsd:sequence>
+            <xsd:element name="Result" type="ResultType" maxOccurs="10"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResultType">
+        <xsd:sequence>
+            <xsd:element name="ActivityID" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Address" type="ResponseAddressType"/>
+            <xsd:element name="ProductResults" type="ProductResultsType"/>
+            <xsd:element name="StatusCode" type="ProductResponseStatusType" minOccurs="0"/>
+            <xsd:element name="Message" type="MessageType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResponseAddressType">
+        <xsd:sequence>
+            <xsd:element name="LegalDescription" type="LegalDescriptionType" minOccurs="0"/>
+            <xsd:element name="AddressID" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="OptaAddressKey" type="OptaAddressKeyType" minOccurs="0"/>
+            <xsd:element name="StreetAddress" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="StreetNumber" type="StreetNumberType" minOccurs="0"/>
+            <xsd:element name="StreetName" type="StreetNameType"/>
+            <xsd:element name="StreetType" type="StreetTypeType" minOccurs="0"/>
+            <xsd:element name="StreetDirection" type="StreetDirectionType" minOccurs="0"/>
+            <xsd:element name="UnitNumber" type="UnitNumberType" minOccurs="0"/>
+            <xsd:element name="Municipality" type="MunicipalityType"/>
+            <xsd:element name="Province" type="ProvinceType"/>
+            <xsd:element name="PostalCode" type="PostalCodeType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ProductResultsType">
+        <xsd:choice maxOccurs="unbounded">
+            <xsd:element name="iClarifyResidentialProduct" type="iClarifyResidentialProductType"/>
+            <xsd:element name="CommercialPerilScoreProduct" type="PerilScoresTypes"/>
+            <xsd:element name="iClarifyCommercialOccupancyProduct" type="iClarifyCommercialOccupancyProductType"/>
+            <xsd:element name="FUSProduct" type="FUSProductType"/>
+            <xsd:element name="PerilScoreProduct" type="PerilScoreProductType"/>
+            <xsd:element name="FloodScoreProduct" type="FloodScoreProductType"/>
+            <xsd:element name="InspectionScoreProduct" type="InspectionScoreProductType"/>
+            <xsd:element name="InspectionAttributesProduct" type="InspectionAttributesProductType"/>
+            <xsd:element name="iClarifyCondoTenantProduct" type="iClarifyCondoTenantProductType"/>
+            <xsd:element name="ResidentialMarketValuationProduct" type="ResidentialMarketValuationProductType"/>
+            <xsd:element name="iClarifyResidentialReportProduct" type="iClarifyResidentialReportProductType"/>
+            <xsd:element name="InspectionOrder" type="BaseProductType"/>
+            <xsd:element name="iClarifyCommercialConstructionFeaturesProduct" type="iClarifyCommercialConstructionFeaturesProductType"/>
+            <xsd:element name="BuildingImagery" type="BuildingImageryType"/>
+            <xsd:element name="AddressSearch" type="AddressSearchType"/>
+            <xsd:element name="iClarifyFinancialResidentialProduct" type="iClarifyResidentialProductType"/>
+            <xsd:element name="OptaAddressKeyProduct" type="OptaAddressKeyProductType"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="BaseProductType">
+        <xsd:sequence>
+            <xsd:element name="StatusCode" type="ProductResponseStatusType"/>
+            <xsd:element name="Messages" type="MessagesType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="BaseImageType">
+        <xsd:sequence>
+            <xsd:element name="ID" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ImageExpiryDate" type="xsd:date" minOccurs="0"/>
+            <xsd:element name="ImageURL" type="xsd:string"/>
+            <xsd:element name="DisplayOrder" type="xsd:integer" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="MessagesType">
+        <xsd:sequence>
+            <xsd:element name="Message" type="xsd:string" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

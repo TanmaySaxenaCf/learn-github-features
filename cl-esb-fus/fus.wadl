@@ -1,0 +1,1015 @@
+
+<application xmlns="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema"><grammars><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.optaintel.ca/ws/OptaSingleService/1.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+<xs:element name="OSSRequest" type="tns:OSSRequestType"/>
+<xs:element name="OSSResponse" type="tns:OSSResponseType"/>
+<xs:complexType name="ResultType">
+<xs:sequence>
+<xs:element name="ActivityID" type="xs:string"/>
+<xs:element name="Address" type="tns:ResponseAddressType"/>
+<xs:element name="ProductResults" type="tns:ProductResultsType"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Message" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseAddressType">
+<xs:sequence>
+<xs:element minOccurs="0" name="AddressID" type="xs:string"/>
+<xs:element minOccurs="0" name="OptaAddressKey" type="xs:string"/>
+<xs:element name="StreetNumber" type="xs:string"/>
+<xs:element name="StreetName" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetType" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetDirection" type="xs:string"/>
+<xs:element minOccurs="0" name="UnitNumber" type="xs:string"/>
+<xs:element name="Municipality" type="xs:string"/>
+<xs:element name="Province" type="tns:ProvinceType"/>
+<xs:element minOccurs="0" name="PostalCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ProductResultsType">
+<xs:sequence>
+<xs:choice maxOccurs="unbounded" minOccurs="0">
+<xs:element name="PerilScoreProduct" type="tns:PerilScoreProductType"/>
+<xs:element name="InspectionScoreProduct" type="tns:InspectionScoreProductType"/>
+<xs:element name="iClarifyCondoTenantProduct" type="tns:iClarifyCondoTenantProductType"/>
+<xs:element name="CommercialPerilScoreProduct" type="tns:CommercialPerilScoreProductType"/>
+<xs:element name="FloodScoreProduct" type="tns:FloodScoreProductType"/>
+<xs:element name="iClarifyResidentialProduct" type="tns:iClarifyResidentialProductType"/>
+<xs:element name="FUSProduct" type="tns:FUSProductType"/>
+<xs:element name="iClarifyCommercialOccupancyProduct" type="tns:iClarifyCommercialOccupancyProductType"/>
+<xs:element name="InspectionAttributesProduct" type="tns:InspectionAttributesProductType"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="PerilScoreProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element name="Perils" type="tns:PerilScorePerilsType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="BaseProductType">
+<xs:sequence>
+<xs:element name="StatusCode" type="tns:ProductResponseStatusType"/>
+<xs:element minOccurs="0" name="ServiceMode" type="xs:string"/>
+<xs:element name="Message" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="PerilScorePerilsType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Peril" type="tns:PerilScorePerilType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="PerilScorePerilType">
+<xs:sequence>
+<xs:element name="PerilDescription" type="xs:string"/>
+<xs:element minOccurs="0" name="FrequencyScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="SeverityScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="LossCostScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="PredictedFrequency" type="xs:double"/>
+<xs:element minOccurs="0" name="PredictedSeverity" type="xs:double"/>
+<xs:element minOccurs="0" name="PredictedLossCost" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FloodScoreProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element name="FloodScores" type="tns:FloodScoresType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="FloodScoresType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="FloodScore" type="tns:FloodScoreType"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="FloodMap" type="tns:FloodMapType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FloodScoreType">
+<xs:sequence>
+<xs:element minOccurs="0" name="Zone" type="xs:string"/>
+<xs:element minOccurs="0" name="Premium" type="tns:FloodValueType"/>
+<xs:element minOccurs="0" name="Limit" type="xs:double"/>
+<xs:element minOccurs="0" name="Deductible" type="xs:double"/>
+<xs:element minOccurs="0" name="FloodScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="AverageAnnualLossScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="AverageAnnualLossValues" type="tns:FloodValueType"/>
+<xs:element minOccurs="0" name="RateFactor" type="xs:float"/>
+<xs:element default="false" minOccurs="0" name="Default" type="xs:boolean"/>
+<xs:element minOccurs="0" name="ResidentialModifiers" type="tns:ResidentialConstructionFeaturesType"/>
+<xs:element minOccurs="0" name="MultiResidentialModifiers" type="tns:MultiResidentialConstructionFeaturesType"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="AdditionalDetails" type="tns:FloodDetailType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FloodValueType">
+<xs:sequence>
+<xs:element minOccurs="0" name="Building" type="xs:float"/>
+<xs:element minOccurs="0" name="Contents" type="xs:float"/>
+<xs:element minOccurs="0" name="Total" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResidentialConstructionFeaturesType">
+<xs:sequence>
+<xs:element minOccurs="0" name="YearBuilt" type="xs:string"/>
+<xs:element minOccurs="0" name="SquareFootage" type="xs:integer"/>
+<xs:element minOccurs="0" name="FoundationType" type="tns:FoundationType"/>
+<xs:element minOccurs="0" name="ArchitecturalStyleType" type="tns:ArchitecturalStyleType"/>
+<xs:element minOccurs="0" name="StoreyCount" type="xs:string"/>
+<xs:element minOccurs="0" name="KitchenCount" type="xs:string"/>
+<xs:element minOccurs="0" name="BathroomCount" type="xs:string"/>
+<xs:element minOccurs="0" name="ExteriorWallType" type="tns:ExteriorWallType"/>
+<xs:element minOccurs="0" name="RoofType" type="tns:RoofType"/>
+<xs:element minOccurs="0" name="FinishedBasement" type="xs:boolean"/>
+<xs:element minOccurs="0" name="GarageType" type="tns:GarageType"/>
+<xs:element minOccurs="0" name="GarageNumberOfCars" type="xs:integer"/>
+<xs:element minOccurs="0" name="SwimmingPoolType" type="tns:SwimmingPoolType"/>
+<xs:element minOccurs="0" name="PrimaryHeatingType" type="tns:PrimaryHeatingType"/>
+<xs:element minOccurs="0" name="AuxiliaryHeatingType" type="tns:AuxiliaryHeatingType"/>
+<xs:element minOccurs="0" name="PlumbingType" type="tns:PlumbingType"/>
+<xs:element minOccurs="0" name="CommercialIndicator" type="xs:boolean"/>
+<xs:element minOccurs="0" name="OutbuildingPresent" type="tns:BooleanWithUnknownType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="MultiResidentialConstructionFeaturesType">
+<xs:sequence>
+<xs:element name="FloorLevel" type="xs:integer"/>
+<xs:element name="ConstructionType" type="tns:ConstructionType"/>
+<xs:element name="BasementPresent" type="tns:BooleanWithUnknownType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FloodDetailType">
+<xs:sequence>
+<xs:element name="Key" type="xs:string"/>
+<xs:element name="Value" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FloodMapType">
+<xs:sequence>
+<xs:element minOccurs="0" name="FloodEvent" type="xs:int"/>
+<xs:element minOccurs="0" name="Content" type="tns:ContentType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ContentType">
+<xs:sequence>
+<xs:element name="ContentURL" type="xs:string"/>
+<xs:element name="MIMEType" type="xs:string"/>
+<xs:element minOccurs="0" name="Expiry" type="xs:dateTime"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="iClarifyResidentialProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element name="ConstructionFeatures" type="tns:ResponseResidentialConstructionFeaturesType"/>
+<xs:element name="Valuation" type="tns:ValuationType"/>
+<xs:element minOccurs="0" name="Images" type="tns:ImagesType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="ResponseResidentialConstructionFeaturesType">
+<xs:sequence>
+<xs:element name="YearBuilt" type="xs:string"/>
+<xs:element name="SquareFootage" type="xs:integer"/>
+<xs:element name="FoundationType" type="tns:FoundationType"/>
+<xs:element name="ArchitecturalStyleType" type="tns:ArchitecturalStyleType"/>
+<xs:element name="StoreyCount" type="xs:string"/>
+<xs:element name="KitchenCount" type="xs:string"/>
+<xs:element name="BathroomCount" type="xs:string"/>
+<xs:element name="ExteriorWallType" type="tns:ExteriorWallType"/>
+<xs:element name="RoofType" type="tns:RoofType"/>
+<xs:element name="FinishedBasement" type="xs:boolean"/>
+<xs:element minOccurs="0" name="GarageType" type="tns:GarageType"/>
+<xs:element minOccurs="0" name="GarageNumberOfCars" type="xs:integer"/>
+<xs:element name="SwimmingPoolType" type="tns:SwimmingPoolType"/>
+<xs:element name="PrimaryHeatingType" type="tns:PrimaryHeatingType"/>
+<xs:element name="AuxiliaryHeatingType" type="tns:AuxiliaryHeatingType"/>
+<xs:element name="PlumbingType" type="tns:PlumbingType"/>
+<xs:element name="CommercialIndicator" type="xs:boolean"/>
+<xs:element name="OutbuildingPresent" type="tns:BooleanWithUnknownType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ValuationType">
+<xs:sequence>
+<xs:element name="ReplacementCost" type="xs:integer"/>
+<xs:element name="CostPerSquareFoot" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ImagesType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="Image" type="tns:ResidentialImageType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResidentialImageType">
+<xs:complexContent>
+<xs:extension base="tns:BaseImageType">
+<xs:sequence>
+<xs:element name="ImageTypeCode" type="tns:ResidentialImageryCode"/>
+<xs:element name="ProviderCode" type="tns:ResidentialImageryProvider"/>
+<xs:element name="BestPhoto" type="xs:boolean"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="BaseImageType">
+<xs:sequence>
+<xs:element name="ID" type="xs:string"/>
+<xs:element name="ImageExpiryDate" type="xs:date"/>
+<xs:element name="ImageURL" type="xs:string"/>
+<xs:element name="DisplayOrder" type="xs:integer"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="iClarifyCondoTenantProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element minOccurs="0" name="Property" type="tns:ResponseCondoTenantPropertyType"/>
+<xs:element minOccurs="0" name="CondoTenantPerilScore" type="tns:ResponseCondoTenantPerilScoreType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="ResponseCondoTenantPropertyType">
+<xs:sequence>
+<xs:element name="ResidentialLineOfBusiness">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="MultiResidentialBuilding" type="tns:ResponseMultiResidentialBuildingType"/>
+<xs:element minOccurs="0" name="ResidentialBuilding" type="tns:ResponseResidentialConstructionFeaturesType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseMultiResidentialBuildingType">
+<xs:sequence>
+<xs:element minOccurs="0" name="BuildingFeatures" type="tns:ResponseBuildingFeaturesType"/>
+<xs:element minOccurs="0" name="UnitFeatures" type="tns:ResponseUnitFeaturesType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseBuildingFeaturesType">
+<xs:sequence>
+<xs:element minOccurs="0" name="PropertyType" type="tns:MultiResidentialPropertyType"/>
+<xs:element minOccurs="0" name="YearBuilt" type="xs:integer"/>
+<xs:element minOccurs="0" name="NumberOfStoreys" type="xs:integer"/>
+<xs:element minOccurs="0" name="ConstructionType" type="tns:ConstructionType"/>
+<xs:element minOccurs="0" name="RoofType" type="tns:RoofType"/>
+<xs:element minOccurs="0" name="HeatingType" type="tns:PrimaryHeatingType"/>
+<xs:element minOccurs="0" name="StructureType" type="tns:CommercialStructureStyleType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseUnitFeaturesType">
+<xs:sequence>
+<xs:element minOccurs="0" name="FloorLevel" type="xs:integer"/>
+<xs:element minOccurs="0" name="TotalFloorArea" type="xs:integer"/>
+<xs:element minOccurs="0" name="NumberOfBedrooms" type="xs:string"/>
+<xs:element minOccurs="0" name="NumberOfBathrooms" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseCondoTenantPerilScoreType">
+<xs:sequence>
+<xs:element name="PerilScoreTotal" type="xs:integer"/>
+<xs:element name="PerilScoreWater" type="xs:integer"/>
+<xs:element name="PerilScoreFire" type="xs:integer"/>
+<xs:element name="PerilScoreWindHail" type="xs:integer"/>
+<xs:element name="PerilScoreCrime" type="xs:integer"/>
+<xs:element name="PerilScoreSewer" type="xs:integer"/>
+<xs:element name="PerilScoreOther" type="xs:integer"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="InspectionScoreProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element minOccurs="0" name="Score" type="xs:integer"/>
+<xs:element minOccurs="0" name="NationalScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="ProvincialScore" type="xs:integer"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="iClarifyCommercialOccupancyProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Occupant" type="tns:CommercialOccupant"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="CommercialOccupant">
+<xs:sequence>
+<xs:element name="PrimaryName" type="xs:string"/>
+<xs:element name="ActiveIndicatorCode" type="tns:ActiveIndicatorType"/>
+<xs:element name="WebsiteURL" type="xs:string"/>
+<xs:element minOccurs="0" name="Industry" type="tns:CommercialOccupancyIndustryType"/>
+<xs:element minOccurs="0" name="CompanyFirmographics" type="tns:CommercialOccupancyFirmographicsType"/>
+<xs:element minOccurs="0" name="ParentCompanyFirmographics" type="tns:CommercialOccupancyFirmographicsType"/>
+<xs:element minOccurs="0" name="Credit" type="tns:CommercialOccupancyCreditType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CommercialOccupancyIndustryType">
+<xs:sequence>
+<xs:element minOccurs="0" name="IndustryCategoryTypeCode" type="tns:MultilingualStringType"/>
+<xs:element minOccurs="0" name="SICCode" type="xs:string"/>
+<xs:element minOccurs="0" name="SICCodeDescription" type="tns:MultilingualStringType"/>
+<xs:element minOccurs="0" name="IBCCode" type="xs:string"/>
+<xs:element minOccurs="0" name="IBCCodeDescription" type="tns:MultilingualStringType"/>
+<xs:element minOccurs="0" name="NAICSCode" type="xs:string"/>
+<xs:element minOccurs="0" name="NAICSCodeDescription" type="tns:MultilingualStringType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="MultilingualStringType">
+<xs:sequence>
+<xs:element minOccurs="0" name="en" type="xs:string"/>
+<xs:element minOccurs="0" name="fr" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CommercialOccupancyFirmographicsType">
+<xs:sequence>
+<xs:element minOccurs="0" name="YearEstablished" type="xs:integer"/>
+<xs:element minOccurs="0" name="NumberOfEmployees" type="xs:integer"/>
+<xs:element minOccurs="0" name="NumberOfEmployeesBinCode" type="xs:string"/>
+<xs:element minOccurs="0" name="TotalSales" type="xs:double"/>
+<xs:element minOccurs="0" name="CurrencyCode" type="tns:CurrencyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CommercialOccupancyCreditType">
+<xs:sequence>
+<xs:element minOccurs="0" name="CreditDelinquencyScore" type="xs:integer"/>
+<xs:element minOccurs="0" name="BusinessFailureRiskScore" type="xs:integer"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FUSProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element name="Dwelling" type="tns:FUSProductDwellingType"/>
+<xs:element name="Commercial" type="tns:FUSProductCommercialType"/>
+<xs:element minOccurs="0" name="EarthquakeCodes" type="tns:EarthquakeCodesType"/>
+<xs:element minOccurs="0" name="HydrantCounts" type="tns:HydrantCountsType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="FUSProductDwellingType">
+<xs:sequence>
+<xs:element name="RespondingFirehall" type="tns:FirehallType"/>
+<xs:element name="DwellingGrades" type="tns:DwellingGradesType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FirehallType">
+<xs:sequence>
+<xs:element name="RoadDistanceKilometres" type="xs:float"/>
+<xs:element name="GoverningAgency" type="xs:string"/>
+<xs:element name="ProtectionGradeTerritories">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="Commercial" type="xs:string"/>
+<xs:element name="Dwelling" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="FirefightersPerFireStation">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="FullTime" type="xs:integer"/>
+<xs:element name="Volunteer" type="xs:integer"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="TankerCapacityImperialGallons" type="xs:integer"/>
+<xs:element name="PumperFlowImperialGallonsPerMinute" type="xs:string"/>
+<xs:element minOccurs="0" name="SuperiorTankerServiceAccreditationDate" type="xs:date"/>
+<xs:element name="GradingDate" type="xs:date"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="DwellingGradesType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="HydrantProtectedGrade" type="tns:DwellingProtectedGradeType"/>
+<xs:element minOccurs="0" name="FirehallProtectedGrade" type="tns:DwellingProtectedGradeType"/>
+<xs:element minOccurs="0" name="AllOtherAreasGrade" type="tns:DwellingProtectedGradeType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="DwellingProtectedGradeType">
+<xs:sequence>
+<xs:element name="Grade" type="xs:string"/>
+<xs:element minOccurs="0" name="WaterSystem" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FUSProductCommercialType">
+<xs:sequence>
+<xs:element name="RespondingFirehall" type="tns:FirehallType"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="CommercialGrade" type="tns:CommercialGradeType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CommercialGradeType">
+<xs:sequence>
+<xs:element name="PublicFireProtectionClassification" type="xs:integer"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="RiskSCORDetail" type="tns:RiskSCORDetailType"/>
+<xs:element minOccurs="0" name="WaterSystem" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RiskSCORDetailType">
+<xs:sequence>
+<xs:element name="RiskSCOR" type="xs:integer"/>
+<xs:element name="Type" type="tns:RiskSCORType"/>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Adjustment" type="tns:RiskSCORAdjustmentType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RiskSCORAdjustmentType">
+<xs:sequence>
+<xs:element name="AdjustmentType" type="xs:string"/>
+<xs:element name="Adjustment" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="EarthquakeCodesType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="EarthquakeCode" type="tns:EarthquakeCodeType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="EarthquakeCodeType">
+<xs:sequence>
+<xs:element name="Zone" type="xs:string"/>
+<xs:element name="Description" type="xs:string"/>
+<xs:element name="SystemName" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="HydrantCountsType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="HydrantCount" type="tns:HydrantCountType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="HydrantCountType">
+<xs:sequence>
+<xs:element name="RadiusMetres" type="xs:integer"/>
+<xs:element name="NumberOfHydrants" type="xs:integer"/>
+<xs:element name="Ownership" type="tns:HydrantOwnershipType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="InspectionAttributesProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Score" type="tns:InspectionAttributesScore"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="InspectionAttributesScore">
+<xs:sequence>
+<xs:element name="InspectionRecommendationType" type="tns:InspectionRecommendationType"/>
+<xs:element name="Score" type="xs:double"/>
+<xs:element minOccurs="0" name="NationalScore" type="xs:double"/>
+<xs:element minOccurs="0" name="ProvincialScore" type="xs:double"/>
+<xs:element minOccurs="0" name="PredictedLossCost" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CommercialPerilScoreProductType">
+<xs:complexContent>
+<xs:extension base="tns:BaseProductType">
+<xs:sequence>
+<xs:element name="AllPerilsScore" type="tns:CommercialPerilScoreType"/>
+<xs:element name="PropertyPerilScores" type="tns:PropertyCommercialPerilsType"/>
+<xs:element name="CasualtyPerilScores" type="tns:CasualtyCommercialPerilsType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="CommercialPerilScoreType">
+<xs:sequence>
+<xs:element name="LossCostScore" type="xs:integer"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CasualtyCommercialPerilScoreType">
+<xs:complexContent>
+<xs:extension base="tns:CommercialPerilScoreType">
+<xs:sequence>
+<xs:element name="PerilType" type="tns:CasualtyCommercialPerilType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="PropertyCommercialPerilScoreType">
+<xs:complexContent>
+<xs:extension base="tns:CommercialPerilScoreType">
+<xs:sequence>
+<xs:element name="PerilType" type="tns:PropertyCommercialPerilType"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:complexType name="PropertyCommercialPerilsType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Peril" type="tns:PropertyCommercialPerilScoreType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CasualtyCommercialPerilsType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="Peril" type="tns:CasualtyCommercialPerilScoreType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="AnyType">
+<xs:sequence>
+<xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestCommercialConstructionFeaturesType">
+<xs:sequence>
+<xs:element name="YearBuilt" type="xs:integer"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestMultiResidentialBuildingType">
+<xs:sequence>
+<xs:element minOccurs="0" name="BuildingFeatures" type="tns:BuildingFeaturesType"/>
+<xs:element minOccurs="0" name="UnitFeatures" type="tns:UnitFeaturesType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="BuildingFeaturesType">
+<xs:sequence>
+<xs:element minOccurs="0" name="PropertyType" type="tns:MultiResidentialPropertyType"/>
+<xs:element minOccurs="0" name="YearBuilt" type="xs:integer"/>
+<xs:element minOccurs="0" name="NumberOfStoreys" type="xs:integer"/>
+<xs:element minOccurs="0" name="ConstructionType" type="tns:ConstructionType"/>
+<xs:element minOccurs="0" name="RoofType" type="tns:RoofType"/>
+<xs:element minOccurs="0" name="HeatingType" type="tns:PrimaryHeatingType"/>
+<xs:element minOccurs="0" name="StructureType" type="tns:CommercialStructureStyleType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="UnitFeaturesType">
+<xs:sequence>
+<xs:element minOccurs="0" name="FloorLevel" type="xs:integer"/>
+<xs:element minOccurs="0" name="TotalFloorArea" type="xs:integer"/>
+<xs:element minOccurs="0" name="NumberOfBedrooms" type="xs:string"/>
+<xs:element minOccurs="0" name="NumberOfBathrooms" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestResidentialConstructionFeaturesType">
+<xs:sequence>
+<xs:element minOccurs="0" name="YearBuilt" type="xs:string"/>
+<xs:element minOccurs="0" name="SquareFootage" type="xs:integer"/>
+<xs:element minOccurs="0" name="FoundationType" type="tns:FoundationType"/>
+<xs:element minOccurs="0" name="ArchitecturalStyleType" type="tns:ArchitecturalStyleType"/>
+<xs:element minOccurs="0" name="StoreyCount" type="xs:string"/>
+<xs:element minOccurs="0" name="KitchenCount" type="xs:string"/>
+<xs:element minOccurs="0" name="BathroomCount" type="xs:string"/>
+<xs:element minOccurs="0" name="ExteriorWallType" type="tns:ExteriorWallType"/>
+<xs:element minOccurs="0" name="RoofType" type="tns:RoofType"/>
+<xs:element minOccurs="0" name="FinishedBasement" type="xs:boolean"/>
+<xs:element minOccurs="0" name="GarageType" type="tns:GarageType"/>
+<xs:element minOccurs="0" name="GarageNumberOfCars" type="xs:integer"/>
+<xs:element minOccurs="0" name="SwimmingPoolType" type="tns:SwimmingPoolType"/>
+<xs:element minOccurs="0" name="PrimaryHeatingType" type="tns:PrimaryHeatingType"/>
+<xs:element minOccurs="0" name="AuxiliaryHeatingType" type="tns:AuxiliaryHeatingType"/>
+<xs:element minOccurs="0" name="PlumbingType" type="tns:PlumbingType"/>
+<xs:element minOccurs="0" name="CommercialIndicator" type="xs:boolean"/>
+<xs:element minOccurs="0" name="OutbuildingPresent" type="tns:BooleanWithUnknownType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="OSSRequestType">
+<xs:sequence>
+<xs:element name="RequestHeader" type="tns:RequestHeaderType"/>
+<xs:element name="RequestBody" type="tns:RequestBodyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestHeaderType">
+<xs:sequence>
+<xs:element name="RequestID" type="xs:string"/>
+<xs:element name="RequestSentTimestamp" type="xs:dateTime"/>
+<xs:element name="Requestor" type="tns:RequestorType"/>
+<xs:element minOccurs="0" name="Language" type="tns:LanguageType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestorType">
+<xs:sequence>
+<xs:element minOccurs="0" name="Carrier" type="xs:string"/>
+<xs:element minOccurs="0" name="Brokerage" type="xs:string"/>
+<xs:element minOccurs="0" name="Username" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestBodyType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="Property" type="tns:RequestPropertyType"/>
+<xs:element name="RequestedProducts" type="tns:RequestedProductsType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestPropertyType">
+<xs:sequence>
+<xs:element name="Address" type="tns:RequestAddressType"/>
+<xs:element maxOccurs="unbounded" name="Business" type="tns:RequestBusinessType"/>
+<xs:element name="Policy" type="tns:RequestPolicyType"/>
+<xs:element minOccurs="0" name="ResidentialLineOfBusiness">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="MultiResidentialBuilding" type="tns:RequestMultiResidentialBuildingType"/>
+<xs:element minOccurs="0" name="ResidentialBuilding" type="tns:RequestResidentialConstructionFeaturesType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element minOccurs="0" name="CommercialLineOfBusiness">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="CommercialBuilding" type="tns:RequestCommercialConstructionFeaturesType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestAddressType">
+<xs:sequence>
+<xs:element minOccurs="0" name="AddressID" type="xs:string"/>
+<xs:element minOccurs="0" name="OptaAddressKey" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetAddress" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetName" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetType" type="xs:string"/>
+<xs:element minOccurs="0" name="StreetDirection" type="xs:string"/>
+<xs:element minOccurs="0" name="UnitNumber" type="xs:string"/>
+<xs:element name="Municipality" type="xs:string"/>
+<xs:element name="Province" type="xs:string"/>
+<xs:element minOccurs="0" name="PostalCode" type="xs:string"/>
+<xs:element minOccurs="0" name="Geocode" type="tns:GeocodeType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="GeocodeType">
+<xs:sequence>
+<xs:element name="Latitude" type="xs:double"/>
+<xs:element name="Longitude" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestBusinessType">
+<xs:sequence>
+<xs:element name="Name" type="xs:string"/>
+<xs:element name="IndustryCodes" type="tns:RequestedIndustryCodeType"/>
+<xs:element name="TotalRevenue" type="xs:double"/>
+<xs:element name="EmployeeCount" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestedIndustryCodeType">
+<xs:sequence>
+<xs:element name="SICCode" type="xs:string"/>
+<xs:element name="IBCCode" type="xs:string"/>
+<xs:element name="NAICSCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestPolicyType">
+<xs:sequence>
+<xs:element minOccurs="0" name="PackageType" type="tns:PackageType"/>
+<xs:element minOccurs="0" name="PolicyNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="TotalInsuredValue" type="xs:double"/>
+<xs:element minOccurs="0" name="CoverageAmounts" type="tns:CoverageAmountType"/>
+<xs:element minOccurs="0" name="Limit" type="xs:double"/>
+<xs:element minOccurs="0" name="Deductible" type="xs:double"/>
+<xs:element minOccurs="0" name="OccupancyType" type="tns:OccupancyType"/>
+<xs:element minOccurs="0" name="OwnershipType" type="tns:OwnershipType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="CoverageAmountType">
+<xs:sequence>
+<xs:element minOccurs="0" name="Building" type="xs:double"/>
+<xs:element minOccurs="0" name="DetachedPrivateStructures" type="xs:double"/>
+<xs:element minOccurs="0" name="Contents" type="xs:double"/>
+<xs:element minOccurs="0" name="AdditionalLivingExpenses" type="xs:double"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="RequestedProductsType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="Product" type="tns:ProductType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="OSSResponseType">
+<xs:sequence>
+<xs:element name="ResponseHeader" type="tns:ResponseHeaderType"/>
+<xs:element name="ResponseBody" type="tns:ResponseBodyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseHeaderType">
+<xs:sequence>
+<xs:element name="RequestID" type="xs:string"/>
+<xs:element name="RequestReceivedTimestamp" type="xs:dateTime"/>
+<xs:element name="ResponseSentTimestamp" type="xs:dateTime"/>
+<xs:element name="ElapsedMilliseconds" type="xs:integer"/>
+<xs:element name="ServiceVersion" type="xs:string"/>
+<xs:element name="Request" type="tns:AnyType"/>
+<xs:element name="MachineName" type="xs:string"/>
+<xs:element name="Session" type="xs:string"/>
+<xs:element name="NodeName" type="xs:string"/>
+<xs:element name="Debug" type="tns:AnyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ResponseBodyType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="Result" type="tns:ResultType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="IndustryCodeType">
+<xs:sequence>
+<xs:element minOccurs="0" name="IBCCode" type="xs:string"/>
+<xs:element minOccurs="0" name="SICCode" type="xs:string"/>
+<xs:element minOccurs="0" name="NAICSCode" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="MessagesType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="Message" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="ProvinceType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="AB"/>
+<xs:enumeration value="BC"/>
+<xs:enumeration value="MB"/>
+<xs:enumeration value="NB"/>
+<xs:enumeration value="NL"/>
+<xs:enumeration value="NS"/>
+<xs:enumeration value="NT"/>
+<xs:enumeration value="NU"/>
+<xs:enumeration value="ON"/>
+<xs:enumeration value="PE"/>
+<xs:enumeration value="QC"/>
+<xs:enumeration value="SK"/>
+<xs:enumeration value="YT"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ProductResponseStatusType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Success"/>
+<xs:enumeration value="Failed"/>
+<xs:enumeration value="Unauthorized"/>
+<xs:enumeration value="ProductNotFound"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ServiceModeType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="ComparativeRater"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="FoundationType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Basement"/>
+<xs:enumeration value="Crawlspace"/>
+<xs:enumeration value="Pier"/>
+<xs:enumeration value="Slab on Grade"/>
+<xs:enumeration value="Walkout Basement"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ArchitecturalStyleType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Detached"/>
+<xs:enumeration value="End Row"/>
+<xs:enumeration value="In Row"/>
+<xs:enumeration value="Semi Detached"/>
+<xs:enumeration value="Duplex"/>
+<xs:enumeration value="Triplex"/>
+<xs:enumeration value="Quadplex"/>
+<xs:enumeration value="Fiveplex"/>
+<xs:enumeration value="Sixplex"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ExteriorWallType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Brick"/>
+<xs:enumeration value="Brick Veneer"/>
+<xs:enumeration value="Concrete"/>
+<xs:enumeration value="Hardie Board"/>
+<xs:enumeration value="Logs"/>
+<xs:enumeration value="Stone"/>
+<xs:enumeration value="Stone Veneer"/>
+<xs:enumeration value="Stucco"/>
+<xs:enumeration value="Vinyl Siding"/>
+<xs:enumeration value="Wood Siding"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="RoofType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Asphalt"/>
+<xs:enumeration value="Clay Tile"/>
+<xs:enumeration value="Concrete"/>
+<xs:enumeration value="Copper"/>
+<xs:enumeration value="Rubber"/>
+<xs:enumeration value="Slate Tile"/>
+<xs:enumeration value="Steel"/>
+<xs:enumeration value="Tar and Gravel"/>
+<xs:enumeration value="Tin"/>
+<xs:enumeration value="Wood Shingles"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="GarageType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Attached Garage"/>
+<xs:enumeration value="Built-in Garage"/>
+<xs:enumeration value="Basement Garage"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="SwimmingPoolType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Inground Concrete"/>
+<xs:enumeration value="Inground Fibre Glass"/>
+<xs:enumeration value="Inground Vinyl"/>
+<xs:enumeration value="Above Ground"/>
+<xs:enumeration value="Above Ground Fibre Glass"/>
+<xs:enumeration value="None"/>
+<xs:enumeration value="Unknown"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="PrimaryHeatingType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Geothermal"/>
+<xs:enumeration value="Radiant"/>
+<xs:enumeration value="Electric"/>
+<xs:enumeration value="Natural Gas Forced Air"/>
+<xs:enumeration value="Oil"/>
+<xs:enumeration value="Water"/>
+<xs:enumeration value="Wood"/>
+<xs:enumeration value="None"/>
+<xs:enumeration value="Unknown"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="AuxiliaryHeatingType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Fireplace"/>
+<xs:enumeration value="Woodstove"/>
+<xs:enumeration value="Wood Furnace"/>
+<xs:enumeration value="Pellet Stove"/>
+<xs:enumeration value="Electric"/>
+<xs:enumeration value="None"/>
+<xs:enumeration value="Unknown"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="PlumbingType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Copper"/>
+<xs:enumeration value="Galvanized"/>
+<xs:enumeration value="Iron"/>
+<xs:enumeration value="PVC"/>
+<xs:enumeration value="ABS"/>
+<xs:enumeration value="Pex"/>
+<xs:enumeration value="Unknown"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="BooleanWithUnknownType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="true"/>
+<xs:enumeration value="false"/>
+<xs:enumeration value="Unknown"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ConstructionType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Fire Resistive - Class 1"/>
+<xs:enumeration value="Masonry Non-Combustible - Class 2"/>
+<xs:enumeration value="Non-Combustible - Class 3"/>
+<xs:enumeration value="Ordinary Construction - Class 4"/>
+<xs:enumeration value="Brick Veneer - Class 5"/>
+<xs:enumeration value="Frame - Class 6"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ResidentialImageryCode">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Street"/>
+<xs:enumeration value="Satellite"/>
+<xs:enumeration value="StaticSatelliteHigh"/>
+<xs:enumeration value="StaticSatelliteLow"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ResidentialImageryProvider">
+<xs:restriction base="xs:string">
+<xs:enumeration value="ILookAbout"/>
+<xs:enumeration value="Google"/>
+<xs:enumeration value="WIES"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="MultiResidentialPropertyType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Apartment"/>
+<xs:enumeration value="Condominium"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="CommercialStructureStyleType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="High Rise"/>
+<xs:enumeration value="Row"/>
+<xs:enumeration value="Walk Up"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ActiveIndicatorType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Active"/>
+<xs:enumeration value="Inactive"/>
+<xs:enumeration value="Unknown"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="CurrencyType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="CAD"/>
+<xs:enumeration value="USD"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="RiskSCORType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Conditional"/>
+<xs:enumeration value="Unconditional"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="HydrantOwnershipType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Public"/>
+<xs:enumeration value="Private"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="InspectionRecommendationType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="CentralHeating"/>
+<xs:enumeration value="Chimney"/>
+<xs:enumeration value="Electrical"/>
+<xs:enumeration value="ExternalWaterDegradation"/>
+<xs:enumeration value="FuelTank"/>
+<xs:enumeration value="FloorPad"/>
+<xs:enumeration value="InternalFireDamage"/>
+<xs:enumeration value="InternalWaterDamage"/>
+<xs:enumeration value="Liability"/>
+<xs:enumeration value="Plumbing"/>
+<xs:enumeration value="Roof"/>
+<xs:enumeration value="SewerBackup"/>
+<xs:enumeration value="Stove"/>
+<xs:enumeration value="SumpPump"/>
+<xs:enumeration value="SumpSewer"/>
+<xs:enumeration value="WashingMachine"/>
+<xs:enumeration value="WaterHeater"/>
+<xs:enumeration value="WaterTank"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="CasualtyCommercialPerilType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="AllCasualty"/>
+<xs:enumeration value="Automobile"/>
+<xs:enumeration value="Employers"/>
+<xs:enumeration value="Professional"/>
+<xs:enumeration value="PremisesOperations"/>
+<xs:enumeration value="ProductsCompletedOperations"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="PropertyCommercialPerilType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="AllProperty"/>
+<xs:enumeration value="Crime"/>
+<xs:enumeration value="Fire"/>
+<xs:enumeration value="Water"/>
+<xs:enumeration value="Wind"/>
+<xs:enumeration value="Hail"/>
+<xs:enumeration value="VehicleImpact"/>
+<xs:enumeration value="OtherBusinessInterruption"/>
+<xs:enumeration value="OtherProperty"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="LanguageType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="E"/>
+<xs:enumeration value="F"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="PackageType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Homeowner"/>
+<xs:enumeration value="Condo"/>
+<xs:enumeration value="Tenant"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="OccupancyType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Primary"/>
+<xs:enumeration value="SecondarySeasonal"/>
+<xs:enumeration value="SecondaryNonSeasonal"/>
+<xs:enumeration value="Rental"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="OwnershipType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="Owned"/>
+<xs:enumeration value="Rented"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="ProductType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="iClarifyResidential"/>
+<xs:enumeration value="iClarifyCommercialOccupancy"/>
+<xs:enumeration value="CommercialPerilScore"/>
+<xs:enumeration value="FUS"/>
+<xs:enumeration value="ResidentialPerilScore"/>
+<xs:enumeration value="FloodScore"/>
+<xs:enumeration value="InspectionScore"/>
+<xs:enumeration value="Attributes"/>
+<xs:enumeration value="iClarifyCondoTenant"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:element name="ResultType" type="tns:ResultType"/>
+<xs:element name="ResultTypes">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ResultType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+</grammars><resources base="http://localhost:8181/cxf/cl/api/oss"><resource path="/"><resource path="fus/"><method name="GET"><request></request><response><representation mediaType="application/json"/></response></method></resource></resource></resources></application>

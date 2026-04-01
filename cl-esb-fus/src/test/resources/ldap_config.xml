@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaas="http://karaf.apache.org/xmlns/jaas/v1.0.0"
+	xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf" xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+	xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+             http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd
+             http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
+              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">	
+<jaas:config name="ldapAvivaCanada" rank="2">
+		 
+		<jaas:module className="org.apache.karaf.jaas.modules.ldap.LDAPLoginModule"
+			flags="sufficient">
+			initialContextFactory=com.sun.jndi.ldap.LdapCtxFactor
+			connection.url= ldap://avantageldap.dev.avivaint.ca:389
+			connection.username= cn=searchcustmersvc_esb_user,ou=people,ou=internal,dc=avivagroup,dc=ca
+			connection.password=abc1234
+			connection.protocol=
+			context.com.sun.jndi.ldap.connect.pool=true
+			context.com.sun.jndi.ldap.connect.timeout=10000
+			context.com.sun.jndi.ldap.read.timeout=10000
+			context.java.naming.referral=ignore
+			user.base.dn=ou=people,ou=internal,dc=avivagroup,dc=ca
+			user.filter=(cn=%u)
+			user.search.subtree=true
+			role.base.dn=ou=groups,ou=internal,dc=avivagroup,dc=ca
+			role.filter=(member=%fqdn)
+			role.name.attribute=cn
+			role.search.subtree=true
+			authentication=simple
+			disableCache=true
+		</jaas:module>
+	</jaas:config>
+</blueprint>

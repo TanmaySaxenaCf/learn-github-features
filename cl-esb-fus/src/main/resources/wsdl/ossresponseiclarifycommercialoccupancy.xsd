@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+	<xsd:complexType name="iClarifyCommercialOccupancyProductType">
+		<xsd:complexContent>
+			<xsd:extension base="BaseProductType">
+				<xsd:sequence>
+					<xsd:element name="Occupant" type="CommercialOccupant" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+    <xsd:complexType name="CommercialOccupant">
+        <xsd:sequence>
+            <xsd:element name="PrimaryName" type="xsd:string"/>
+            <xsd:element name="ActiveIndicatorCode" type="ActiveIndicatorType"/>
+            <xsd:element name="WebsiteURL" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Industry" type="CommercialOccupancyIndustryType" minOccurs="0"/>
+            <xsd:element name="CompanyFirmographics" type="CommercialOccupancyFirmographicsType" minOccurs="0"/>
+            <xsd:element name="ParentCompanyFirmographics" type="CommercialOccupancyFirmographicsType" minOccurs="0"/>
+            <xsd:element name="Credit" type="CommercialOccupancyCreditType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CommercialOccupancyFirmographicsType">
+        <xsd:sequence>
+            <xsd:element name="YearEstablished" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="NumberOfEmployees" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="NumberOfEmployeesBinCode" type="NumberOfEmployeesBinType" minOccurs="0"/>
+            <xsd:element name="TotalSales" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="CurrencyCode" type="CurrencyType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CommercialOccupancyIndustryType">
+        <xsd:sequence>
+            <xsd:element name="IndustryCategoryTypeCode" type="MultilingualStringType" minOccurs="0"/>
+            <xsd:element name="SICCode" type="SICCodeType" minOccurs="0"/>
+            <xsd:element name="SICCodeDescription" type="MultilingualStringType" minOccurs="0"/>
+            <xsd:element name="IBCCode" type="IBCCodeType" minOccurs="0"/>
+            <xsd:element name="IBCCodeDescription" type="MultilingualStringType" minOccurs="0"/>
+            <xsd:element name="NAICSCode" type="NAICSCodeType" minOccurs="0"/>
+            <xsd:element name="NAICSCodeDescription" type="MultilingualStringType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="CommercialOccupancyCreditType">
+        <xsd:sequence>
+            <xsd:element name="CreditDelinquencyScore" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="BusinessFailureRiskScore" type="xsd:integer" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+   	<xsd:simpleType name="ActiveIndicatorType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Active"/>
+			<xsd:enumeration value="Inactive"/>
+            <xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+   	<xsd:simpleType name="NumberOfEmployeesBinType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="1 to 4"/>
+			<xsd:enumeration value="5 to 9"/>
+            <xsd:enumeration value="10 to 19"/>
+            <xsd:enumeration value="20 to 49"/>
+            <xsd:enumeration value="50 to 99"/>
+            <xsd:enumeration value="100 to 249"/>
+            <xsd:enumeration value="250 to 499"/>
+            <xsd:enumeration value="500 to 999"/>
+            <xsd:enumeration value="1,000 to 4,999"/>
+            <xsd:enumeration value="5,000 to 9,999"/>
+            <xsd:enumeration value="10,000 +"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

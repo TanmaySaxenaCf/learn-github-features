@@ -1,0 +1,1213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="d7979a58-5d92-4325-b5a7-9ca87af59647" activeEnvironment="Default" name="st1.optaintel" resourceRoot="" soapui-version="5.2.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="b3abe5bb-e9ef-4248-9631-16514e49043c" wsaVersion="NONE" name="OptaSingleServiceBinding" type="wsdl" bindingName="{http://www.optaintel.ca/ws/OptaSingleService/1.0}OptaSingleServiceBinding" soapVersion="1_1" anonymous="optional" definition="http://st1.optaintel.ca/OSSProxyCT?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.cxf.CXFAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
+  <con:entry key="EXSH" value="false"/>
+  <con:entry key="Java Args" value=""/>
+  <con:entry key="Class Folder" value=""/>
+  <con:entry key="Exclude namespaces" value="&lt;xml-fragment/>"/>
+  <con:entry key="build.xml" value="false"/>
+  <con:entry key="Bindings" value=""/>
+  <con:entry key="Implementation" value="true"/>
+  <con:entry key="Server" value="true"/>
+  <con:entry key="Tool Args" value=""/>
+  <con:entry key="Output Packages" value="&lt;xml-fragment/>"/>
+  <con:entry key="All Code" value="false"/>
+  <con:entry key="Use cached WSDL" value="true"/>
+  <con:entry key="DEX" value="true"/>
+  <con:entry key="Validate WSDL" value="false"/>
+  <con:entry key="Output Directory" value="C:\dev\Projects\CLNBPrioritization\OPTA\cxf"/>
+  <con:entry key="Compile" value="false"/>
+  <con:entry key="WSDL" value="http://st1.optaintel.ca/OSSProxyCT?wsdl"/>
+  <con:entry key="DNS" value="true"/>
+  <con:entry key="Catalog" value=""/>
+  <con:entry key="Package" value=""/>
+  <con:entry key="Client" value="true"/>
+</xml-fragment>]]></con:setting></con:settings><con:definitionCache type="TEXT" rootPart="http://st1.optaintel.ca/OSSProxyCT?wsdl"><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="OptaSingleService" targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" xmlns:opta="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <!--types-->
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+      <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSRequest.xsd"/>
+      <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+      <xsd:element name="OSSRequest" type="OSSRequestType"/>
+      <xsd:element name="OSSResponse" type="OSSResponseType"/>
+    </xsd:schema>
+  </wsdl:types>
+  <!--message-->
+  <wsdl:message name="OSSRequestMessage">
+    <wsdl:part name="Request" element="opta:OSSRequest"/>
+  </wsdl:message>
+  <wsdl:message name="OSSResponseMessage">
+    <wsdl:part name="Response" element="opta:OSSResponse"/>
+  </wsdl:message>
+  <!--port-->
+  <wsdl:portType name="OptaSingleServicePort">
+    <wsdl:operation name="call">
+      <wsdl:input message="opta:OSSRequestMessage"/>
+      <wsdl:output message="opta:OSSResponseMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <!--binding-->
+  <wsdl:binding name="OptaSingleServiceBinding" type="opta:OptaSingleServicePort">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="call">
+      <soap:operation soapAction=""/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <!--service-->
+  <wsdl:service name="OptaSingleService">
+    <wsdl:documentation>TODO fill in some documentation here</wsdl:documentation>
+    <wsdl:port name="OptaSingleServicePort" binding="opta:OptaSingleServiceBinding">
+      <wsp:PolicyReference URI="#OptaSingleServiceServiceSoapBindingPolicy"/>
+      <soap:address location="http://st1.optaintel.ca/OSSProxyCT/OptaSingleService"/>
+    </wsdl:port>
+  </wsdl:service>
+  <!--policy-->
+  <wsp:Policy wsu:Id="OptaSingleServiceServiceSoapBindingPolicy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:SupportingTokens>
+          <wsp:Policy>
+            <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+              <wsp:Policy>
+                <sp:WssUsernameToken11/>
+              </wsp:Policy>
+            </sp:UsernameToken>
+          </wsp:Policy>
+        </sp:SupportingTokens>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSRequest.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="OSSRequestType">
+    <xsd:sequence>
+      <xsd:element name="RequestHeader" type="RequestHeaderType"/>
+      <xsd:element name="RequestBody" type="RequestBodyType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RequestHeaderType">
+    <xsd:sequence>
+      <xsd:element name="RequestID" type="xsd:string"/>
+      <xsd:element name="RequestSentTimestamp" type="xsd:dateTime"/>
+      <xsd:element name="Requestor" type="RequestorType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RequestorType">
+    <xsd:sequence>
+      <xsd:element name="Carrier" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="Brokerage" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="Username" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RequestBodyType">
+    <xsd:sequence>
+      <xsd:element name="Address" type="RequestAddressType" maxOccurs="10"/>
+      <xsd:element name="RequestedProducts" type="RequestedProductsType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RequestAddressType">
+    <xsd:sequence>
+      <xsd:element name="AddressID" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="OptaAddressKey" type="xsd:string" minOccurs="0"/>
+      <xsd:choice>
+        <xsd:element name="StreetAddress" type="xsd:string"/>
+        <xsd:sequence>
+          <xsd:element name="StreetNumber" type="xsd:string"/>
+          <xsd:element name="StreetName" type="xsd:string"/>
+          <xsd:element name="StreetType" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="StreetDirection" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="UnitNumber" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:choice>
+      <xsd:element name="Municipality" type="xsd:string"/>
+      <xsd:element name="Province" type="xsd:string"/>
+      <xsd:element name="PostalCode" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="UserProvidedConstructionFeatures" type="RequestResidentialConstructionFeaturesType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RequestResidentialConstructionFeaturesType">
+    <xsd:sequence>
+      <xsd:element name="YearBuilt" type="YearBuiltType" minOccurs="0"/>
+      <xsd:element name="SquareFootage" type="SquareFootageType" minOccurs="0"/>
+      <xsd:element name="FoundationType" type="FoundationType" minOccurs="0"/>
+      <xsd:element name="ArchitecturalStyleType" type="ArchitecturalStyleType" minOccurs="0"/>
+      <xsd:element name="StoreyCount" type="ResidentialStoreyCountType" minOccurs="0"/>
+      <xsd:element name="KitchenCount" type="ResidentialKitchenCountType" minOccurs="0"/>
+      <xsd:element name="BathroomCount" type="ResidentialBathroomCountType" minOccurs="0"/>
+      <xsd:element name="ExteriorWallType" type="ExteriorWallType" minOccurs="0"/>
+      <xsd:element name="RoofType" type="RoofType" minOccurs="0"/>
+      <xsd:element name="FinishedBasement" type="FinishedBasementType" minOccurs="0"/>
+      <xsd:element name="GarageType" type="GarageType" minOccurs="0"/>
+      <xsd:element name="GarageNumberOfCars" type="GarageNumberOfCarsType" minOccurs="0"/>
+      <xsd:element name="SwimmingPoolType" type="SwimmingPoolType" minOccurs="0"/>
+      <xsd:element name="PrimaryHeatingType" type="PrimaryHeatingType" minOccurs="0"/>
+      <xsd:element name="AuxiliaryHeatingType" type="AuxiliaryHeatingType" minOccurs="0"/>
+      <xsd:element name="PlumbingType" type="PlumbingType" minOccurs="0"/>
+      <xsd:element name="CommercialIndicator" type="xsd:boolean" minOccurs="0"/>
+      <xsd:element name="OutbuildingPresent" type="BooleanWithUnknownType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RequestedProductsType">
+    <xsd:sequence>
+      <xsd:element name="Product" type="ProductType" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="ProductType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="iClarifyResidential"/>
+      <xsd:enumeration value="iClarifyCommercialOccupancy"/>
+      <xsd:enumeration value="CommercialPerilScore"/>
+      <xsd:enumeration value="FUS"/>
+      <xsd:enumeration value="PerilScore"/>
+      <xsd:enumeration value="PerilScore-Water"/>
+      <xsd:enumeration value="PerilScore-Sewer"/>
+      <xsd:enumeration value="PerilScore-Fire"/>
+      <xsd:enumeration value="PerilScore-WindHail"/>
+      <xsd:enumeration value="PerilScore-Theft"/>
+      <xsd:enumeration value="PerilScore-AllPerils"/>
+      <xsd:enumeration value="FloodScore"/>
+      <xsd:enumeration value="FloodScore-Fluvial"/>
+      <xsd:enumeration value="InspectionScore"/>
+      <xsd:enumeration value="InspectionAttributes"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:simpleType name="OptaAddressKeyType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\d{2}[A-Z]\-\d{2}[A-Z]\-\d{2}[A-Z]$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="UnparsedStreetAddressType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="200"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="StreetNumberType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^[A-Za-z]{0,}\d{1,}[A-Za-z]{0,}$"/>
+      <xsd:maxLength value="10"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="StreetNameType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="100"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="StreetTypeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="10"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="StreetDirectionType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="20"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="UnitNumberType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="10"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="MunicipalityType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="100"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ProvinceType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="AB"/>
+      <xsd:enumeration value="BC"/>
+      <xsd:enumeration value="MB"/>
+      <xsd:enumeration value="NB"/>
+      <xsd:enumeration value="NL"/>
+      <xsd:enumeration value="NS"/>
+      <xsd:enumeration value="NT"/>
+      <xsd:enumeration value="NU"/>
+      <xsd:enumeration value="ON"/>
+      <xsd:enumeration value="PE"/>
+      <xsd:enumeration value="QC"/>
+      <xsd:enumeration value="SK"/>
+      <xsd:enumeration value="YT"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="PostalCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^([A-Z]\d){3}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="GeocodeType">
+    <xsd:sequence>
+      <xsd:element name="Latitude" type="xsd:double"/>
+      <xsd:element name="Longitude" type="xsd:double"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="EmailAddressType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="BooleanWithUnknownType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="true"/>
+      <xsd:enumeration value="false"/>
+      <xsd:enumeration value="Unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="YearBuiltType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\d{4}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="SquareFootageType">
+    <xsd:restriction base="xsd:integer"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="FoundationType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Basement"/>
+      <xsd:enumeration value="Crawlspace"/>
+      <xsd:enumeration value="Pier"/>
+      <xsd:enumeration value="Slab on Grade"/>
+      <xsd:enumeration value="Walkout Basement"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ArchitecturalStyleType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Detached"/>
+      <xsd:enumeration value="End Row"/>
+      <xsd:enumeration value="In Row"/>
+      <xsd:enumeration value="Semi Detached"/>
+      <xsd:enumeration value="Duplex"/>
+      <xsd:enumeration value="Triplex"/>
+      <xsd:enumeration value="Quadplex"/>
+      <xsd:enumeration value="Fiveplex"/>
+      <xsd:enumeration value="Sixplex"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ResidentialStoreyCountType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="1"/>
+      <xsd:enumeration value="1.5"/>
+      <xsd:enumeration value="2"/>
+      <xsd:enumeration value="2.5"/>
+      <xsd:enumeration value="3"/>
+      <xsd:enumeration value="3.5"/>
+      <xsd:enumeration value="4"/>
+      <xsd:enumeration value="BiLevel"/>
+      <xsd:enumeration value="TriLevel"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ResidentialKitchenCountType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="1"/>
+      <xsd:enumeration value="2"/>
+      <xsd:enumeration value="3"/>
+      <xsd:enumeration value="More"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ResidentialBathroomCountType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="1"/>
+      <xsd:enumeration value="1.5"/>
+      <xsd:enumeration value="2"/>
+      <xsd:enumeration value="2.5"/>
+      <xsd:enumeration value="3"/>
+      <xsd:enumeration value="3.5"/>
+      <xsd:enumeration value="4"/>
+      <xsd:enumeration value="4.5"/>
+      <xsd:enumeration value="More"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ExteriorWallType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Brick"/>
+      <xsd:enumeration value="Brick Veneer"/>
+      <xsd:enumeration value="Concrete"/>
+      <xsd:enumeration value="Hardie Board"/>
+      <xsd:enumeration value="Logs"/>
+      <xsd:enumeration value="Stone"/>
+      <xsd:enumeration value="Stone Veneer"/>
+      <xsd:enumeration value="Stucco"/>
+      <xsd:enumeration value="Vinyl Siding"/>
+      <xsd:enumeration value="Wood Siding"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="RoofType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Asphalt"/>
+      <xsd:enumeration value="Clay Tile"/>
+      <xsd:enumeration value="Concrete"/>
+      <xsd:enumeration value="Copper"/>
+      <xsd:enumeration value="Rubber"/>
+      <xsd:enumeration value="Slate Tile"/>
+      <xsd:enumeration value="Steel"/>
+      <xsd:enumeration value="Tar and Gravel"/>
+      <xsd:enumeration value="Tin"/>
+      <xsd:enumeration value="Wood Shingles"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="FinishedBasementType">
+    <xsd:restriction base="xsd:boolean"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="GarageType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Attached Garage"/>
+      <xsd:enumeration value="Built-in Garage"/>
+      <xsd:enumeration value="Basement Garage"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="GarageNumberOfCarsType">
+    <xsd:restriction base="xsd:integer">
+      <xsd:enumeration value="1"/>
+      <xsd:enumeration value="2"/>
+      <xsd:enumeration value="3"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="SwimmingPoolType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Inground Concrete"/>
+      <xsd:enumeration value="Inground Fibre Glass"/>
+      <xsd:enumeration value="Inground Vinyl"/>
+      <xsd:enumeration value="Above Ground"/>
+      <xsd:enumeration value="Above Ground Fibre Glass"/>
+      <xsd:enumeration value="None"/>
+      <xsd:enumeration value="Unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="PrimaryHeatingType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Geothermal"/>
+      <xsd:enumeration value="Radiant"/>
+      <xsd:enumeration value="Electric"/>
+      <xsd:enumeration value="Natural Gas Forced Air"/>
+      <xsd:enumeration value="Oil"/>
+      <xsd:enumeration value="Water"/>
+      <xsd:enumeration value="Wood"/>
+      <xsd:enumeration value="None"/>
+      <xsd:enumeration value="Unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="AuxiliaryHeatingType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Fireplace"/>
+      <xsd:enumeration value="Woodstove"/>
+      <xsd:enumeration value="Wood Furnace"/>
+      <xsd:enumeration value="Pellet Stove"/>
+      <xsd:enumeration value="Electric"/>
+      <xsd:enumeration value="None"/>
+      <xsd:enumeration value="Unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="PlumbingType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Copper"/>
+      <xsd:enumeration value="Galvanized"/>
+      <xsd:enumeration value="Iron"/>
+      <xsd:enumeration value="PVC"/>
+      <xsd:enumeration value="ABS"/>
+      <xsd:enumeration value="Pex"/>
+      <xsd:enumeration value="Unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="CurrencyType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="CAD"/>
+      <xsd:enumeration value="USD"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="SICCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\d{4}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="IBCCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\d{4}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="NAICSCodeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\d{6}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="MultilingualStringType">
+    <xsd:sequence>
+      <xsd:element name="en" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="fr" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="ServiceModeType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="ComparativeRater"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ProductResponseStatusType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Success"/>
+      <xsd:enumeration value="Failed"/>
+      <xsd:enumeration value="Unauthorized"/>
+      <xsd:enumeration value="ProductNotFound"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="MessageType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="255"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="AnyType">
+    <xsd:sequence>
+      <xsd:any minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseIClarifyResidential.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseCommercialPerilScore.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseIClarifyCommercialOccupancy.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseFUS.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponsePerilScore.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseFloodScore.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseInspectionScore.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseInspectionAttributes.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="OSSResponseType">
+    <xsd:sequence>
+      <xsd:element name="ResponseHeader" type="ResponseHeaderType"/>
+      <xsd:element name="ResponseBody" type="ResponseBodyType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ResponseHeaderType">
+    <xsd:sequence>
+      <xsd:element name="RequestID" type="xsd:string"/>
+      <xsd:element name="RequestReceivedTimestamp" type="xsd:dateTime"/>
+      <xsd:element name="ResponseSentTimestamp" type="xsd:dateTime"/>
+      <xsd:element name="ElapsedMilliseconds" type="xsd:integer"/>
+      <xsd:element name="ServiceVersion" type="xsd:string"/>
+      <xsd:element name="Request" type="AnyType"/>
+      <xsd:element name="Debug" type="AnyType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ResponseBodyType">
+    <xsd:sequence>
+      <xsd:element name="Result" type="ResultType" maxOccurs="10"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ResultType">
+    <xsd:sequence>
+      <xsd:element name="ActivityID" type="xsd:string"/>
+      <xsd:element name="Address" type="ResponseAddressType"/>
+      <xsd:element name="ProductResults" type="ProductResultsType"/>
+      <xsd:element name="Message" type="MessageType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ResponseAddressType">
+    <xsd:sequence>
+      <xsd:element name="AddressID" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="OptaAddressKey" type="OptaAddressKeyType" minOccurs="0"/>
+      <xsd:element name="StreetNumber" type="StreetNumberType"/>
+      <xsd:element name="StreetName" type="StreetNameType"/>
+      <xsd:element name="StreetType" type="StreetTypeType" minOccurs="0"/>
+      <xsd:element name="StreetDirection" type="StreetDirectionType" minOccurs="0"/>
+      <xsd:element name="UnitNumber" type="UnitNumberType" minOccurs="0"/>
+      <xsd:element name="Municipality" type="MunicipalityType"/>
+      <xsd:element name="Province" type="ProvinceType"/>
+      <xsd:element name="PostalCode" type="PostalCodeType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ProductResultsType">
+    <xsd:sequence>
+      <xsd:sequence>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="iClarifyResidentialProduct" type="iClarifyResidentialProductType"/>
+          <xsd:element name="CommercialPerilScoreProduct" type="CommercialPerilScoreProductType"/>
+          <xsd:element name="iClarifyCommercialOccupancyProduct" type="iClarifyCommercialOccupancyProductType"/>
+          <xsd:element name="FUSProduct" type="FUSProductType"/>
+          <xsd:element name="PerilScoreProduct" type="PerilScoreProductType"/>
+          <xsd:element name="FloodScoreProduct" type="FloodScoreProductType"/>
+          <xsd:element name="InspectionScoreProduct" type="InspectionScoreProductType"/>
+          <xsd:element name="InspectionAttributesProduct" type="InspectionAttributesProductType"/>
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="BaseProductType">
+    <xsd:sequence>
+      <xsd:element name="StatusCode" type="ProductResponseStatusType"/>
+      <xsd:element name="ServiceMode" type="ServiceModeType"/>
+      <xsd:element name="Message" type="MessageType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="BasePerilType">
+    <xsd:sequence>
+      <xsd:element name="PerilDescription" type="xsd:string"/>
+      <xsd:element name="KindOfLoss" type="KindOfLossType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="CoverageCode" type="xsd:string"/>
+      <xsd:element name="Premium" type="xsd:double"/>
+      <xsd:element name="RateFactor" type="xsd:float"/>
+      <xsd:element name="Deductible" type="xsd:integer"/>
+      <xsd:element name="Limit" type="xsd:integer"/>
+      <xsd:element name="Zone" type="xsd:string"/>
+      <xsd:element name="Message" type="MessageType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="KindOfLossType">
+    <xsd:sequence>
+      <xsd:element name="LossCode" type="xsd:string"/>
+      <xsd:element name="LossDescription" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ContentType">
+    <xsd:sequence>
+      <xsd:element name="ContentURL" type="xsd:string"/>
+      <xsd:element name="MIMEType" type="xsd:string"/>
+      <xsd:element name="Expiry" type="xsd:dateTime" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="BaseImageType">
+    <xsd:sequence>
+      <xsd:element name="ID" type="xsd:string"/>
+      <xsd:element name="ImageExpiryDate" type="xsd:date"/>
+      <xsd:element name="ImageURL" type="xsd:string"/>
+      <xsd:element name="DisplayOrder" type="xsd:integer"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseIClarifyResidential.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="iClarifyResidentialProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="ConstructionFeatures" type="ResponseResidentialConstructionFeaturesType"/>
+          <xsd:element name="Valuation" type="ValuationType"/>
+          <xsd:element name="Images" type="ImagesType" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ImagesType">
+    <xsd:sequence>
+      <xsd:element name="Image" type="ResidentialImageType" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ResidentialImageType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseImageType">
+        <xsd:sequence>
+          <xsd:element name="ImageTypeCode" type="ResidentialImageryCode"/>
+          <xsd:element name="ProviderCode" type="ResidentialImageryProvider"/>
+          <xsd:element name="BestPhoto" type="xsd:boolean"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ResponseResidentialConstructionFeaturesType">
+    <xsd:sequence>
+      <xsd:element name="YearBuilt" type="YearBuiltType"/>
+      <xsd:element name="SquareFootage" type="SquareFootageType"/>
+      <xsd:element name="FoundationType" type="FoundationType"/>
+      <xsd:element name="ArchitecturalStyleType" type="ArchitecturalStyleType"/>
+      <xsd:element name="StoreyCount" type="ResidentialStoreyCountType"/>
+      <xsd:element name="KitchenCount" type="ResidentialKitchenCountType"/>
+      <xsd:element name="BathroomCount" type="ResidentialBathroomCountType"/>
+      <xsd:element name="ExteriorWallType" type="ExteriorWallType"/>
+      <xsd:element name="RoofType" type="RoofType"/>
+      <xsd:element name="FinishedBasement" type="FinishedBasementType"/>
+      <xsd:element name="GarageType" type="GarageType" minOccurs="0"/>
+      <xsd:element name="GarageNumberOfCars" type="GarageNumberOfCarsType" minOccurs="0"/>
+      <xsd:element name="SwimmingPoolType" type="SwimmingPoolType"/>
+      <xsd:element name="PrimaryHeatingType" type="PrimaryHeatingType"/>
+      <xsd:element name="AuxiliaryHeatingType" type="AuxiliaryHeatingType"/>
+      <xsd:element name="PlumbingType" type="PlumbingType"/>
+      <xsd:element name="CommercialIndicator" type="xsd:boolean"/>
+      <xsd:element name="OutbuildingPresent" type="BooleanWithUnknownType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValuationType">
+    <xsd:sequence>
+      <xsd:element name="ReplacementCost" type="xsd:integer"/>
+      <xsd:element name="CostPerSquareFoot" type="xsd:double"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="ResidentialImageryCode">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Street"/>
+      <xsd:enumeration value="Satellite"/>
+      <xsd:enumeration value="StaticSatelliteHigh"/>
+      <xsd:enumeration value="StaticSatelliteLow"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ResidentialImageryProvider">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="ILookAbout"/>
+      <xsd:enumeration value="Google"/>
+      <xsd:enumeration value="WIES"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseCommercialPerilScore.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="CommercialPerilScoreProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="AllPerilsScore" type="CommercialPerilScoreType"/>
+          <xsd:element name="PropertyPerilScores" type="PropertyCommercialPerilsType"/>
+          <xsd:element name="CasualtyPerilScores" type="CasualtyCommercialPerilsType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CommercialPerilScoreType">
+    <xsd:sequence>
+      <xsd:element name="LossCostScore" type="xsd:integer"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="PropertyCommercialPerilsType">
+    <xsd:sequence>
+      <xsd:element name="Peril" type="PropertyCommercialPerilScoreType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CasualtyCommercialPerilsType">
+    <xsd:sequence>
+      <xsd:element name="Peril" type="CasualtyCommercialPerilScoreType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="PropertyCommercialPerilScoreType">
+    <xsd:complexContent>
+      <xsd:extension base="CommercialPerilScoreType">
+        <xsd:sequence>
+          <xsd:element name="PerilType" type="PropertyCommercialPerilType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CasualtyCommercialPerilScoreType">
+    <xsd:complexContent>
+      <xsd:extension base="CommercialPerilScoreType">
+        <xsd:sequence>
+          <xsd:element name="PerilType" type="CasualtyCommercialPerilType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:simpleType name="PropertyCommercialPerilType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="AllProperty"/>
+      <xsd:enumeration value="Crime"/>
+      <xsd:enumeration value="Fire"/>
+      <xsd:enumeration value="Water"/>
+      <xsd:enumeration value="Wind"/>
+      <xsd:enumeration value="Hail"/>
+      <xsd:enumeration value="VehicleImpact"/>
+      <xsd:enumeration value="OtherBusinessInterruption"/>
+      <xsd:enumeration value="OtherProperty"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="CasualtyCommercialPerilType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="AllCasualty"/>
+      <xsd:enumeration value="Automobile"/>
+      <xsd:enumeration value="Employers"/>
+      <xsd:enumeration value="Professional"/>
+      <xsd:enumeration value="PremisesOperations"/>
+      <xsd:enumeration value="ProductsCompletedOperations"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseIClarifyCommercialOccupancy.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="iClarifyCommercialOccupancyProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="Occupant" type="CommercialOccupant" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CommercialOccupant">
+    <xsd:sequence>
+      <xsd:element name="PrimaryName" type="xsd:string"/>
+      <xsd:element name="Industry" type="CommercialOccupancyIndustryType" minOccurs="0"/>
+      <xsd:element name="CompanyFirmographics" type="CommercialOccupancyFirmographicsType" minOccurs="0"/>
+      <xsd:element name="ParentCompanyFirmographics" type="CommercialOccupancyFirmographicsType" minOccurs="0"/>
+      <xsd:element name="Credit" type="CommercialOccupancyCreditType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CommercialOccupancyFirmographicsType">
+    <xsd:sequence>
+      <xsd:element name="YearEstablished" type="xsd:integer" minOccurs="0"/>
+      <xsd:element name="NumberOfEmployees" type="xsd:integer" minOccurs="0"/>
+      <xsd:element name="TotalSales" type="xsd:double" minOccurs="0"/>
+      <xsd:element name="CurrencyCode" type="CurrencyType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CommercialOccupancyIndustryType">
+    <xsd:sequence>
+      <xsd:element name="SICCode" type="SICCodeType" minOccurs="0"/>
+      <xsd:element name="SICCodeDescription" type="MultilingualStringType" minOccurs="0"/>
+      <xsd:element name="IBCCode" type="IBCCodeType" minOccurs="0"/>
+      <xsd:element name="IBCCodeDescription" type="MultilingualStringType" minOccurs="0"/>
+      <xsd:element name="NAICSCode" type="NAICSCodeType" minOccurs="0"/>
+      <xsd:element name="NAICSCodeDescription" type="MultilingualStringType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CommercialOccupancyCreditType">
+    <xsd:sequence>
+      <xsd:element name="CreditDelinquencyScore" type="xsd:integer" minOccurs="0"/>
+      <xsd:element name="BusinessFailureRiskScore" type="xsd:integer" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseFUS.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="FUSProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="Dwelling" type="FUSProductDwellingType"/>
+          <xsd:element name="Commercial" type="FUSProductCommercialType"/>
+          <xsd:element name="EarthquakeCodes" type="EarthquakeCodesType" minOccurs="0"/>
+          <xsd:element name="HydrantCounts" type="HydrantCountsType" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FUSProductDwellingType">
+    <xsd:sequence>
+      <xsd:element name="RespondingFirehall" type="FirehallType"/>
+      <xsd:element name="DwellingGrades" type="DwellingGradesType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DwellingGradesType">
+    <xsd:sequence>
+      <xsd:element name="HydrantProtectedGrade" type="DwellingProtectedGradeType" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="FirehallProtectedGrade" type="DwellingProtectedGradeType" minOccurs="0"/>
+      <xsd:element name="AllOtherAreasGrade" type="DwellingProtectedGradeType" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DwellingProtectedGradeType">
+    <xsd:sequence>
+      <xsd:element name="Grade" type="xsd:string"/>
+      <xsd:element name="WaterSystem" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="FUSProductCommercialType">
+    <xsd:sequence>
+      <xsd:element name="RespondingFirehall" type="FirehallType"/>
+      <xsd:element name="CommercialGrade" type="CommercialGradeType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CommercialGradeType">
+    <xsd:sequence>
+      <xsd:element name="PublicFireProtectionClassification" type="xsd:integer"/>
+      <xsd:element name="RiskSCORDetail" type="RiskSCORDetailType" minOccurs="0" maxOccurs="2"/>
+      <xsd:element name="WaterSystem" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RiskSCORDetailType">
+    <xsd:sequence>
+      <xsd:element name="RiskSCOR" type="xsd:integer"/>
+      <xsd:element name="Type" type="RiskSCORType"/>
+      <xsd:element name="Adjustment" type="RiskSCORAdjustmentType" minOccurs="0" maxOccurs="2"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RiskSCORAdjustmentType">
+    <xsd:sequence>
+      <xsd:element name="AdjustmentType" type="xsd:string"/>
+      <xsd:element name="Adjustment" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="RiskSCORType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Conditional"/>
+      <xsd:enumeration value="Unconditional"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="FirehallType">
+    <xsd:sequence>
+      <xsd:element name="RoadDistanceKilometres" type="xsd:float"/>
+      <xsd:element name="GoverningAgency" type="xsd:string"/>
+      <xsd:element name="ProtectionGradeTerritories">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Commercial" type="ProtectionGradeTerritoryType"/>
+            <xsd:element name="Dwelling" type="ProtectionGradeTerritoryType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="FirefightersPerFireStation">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="FullTime" type="xsd:integer"/>
+            <xsd:element name="Volunteer" type="xsd:integer"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="TankerCapacityImperialGallons" type="xsd:integer"/>
+      <xsd:element name="PumperFlowImperialGallonsPerMinute" type="xsd:integer"/>
+      <xsd:element name="SuperiorTankerServiceAccreditationDate" type="xsd:date" minOccurs="0"/>
+      <xsd:element name="GradingDate" type="xsd:date"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="ProtectionGradeTerritoryType">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="^\d{1,2}$"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="EarthquakeCodesType">
+    <xsd:sequence>
+      <xsd:element name="EarthquakeCode" type="EarthquakeCodeType" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="EarthquakeCodeType">
+    <xsd:sequence>
+      <xsd:element name="Zone" type="xsd:string"/>
+      <xsd:element name="Description" type="xsd:string"/>
+      <xsd:element name="SystemName" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="HydrantCountsType">
+    <xsd:sequence>
+      <xsd:element name="HydrantCount" type="HydrantCountType" maxOccurs="2"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="HydrantCountType">
+    <xsd:sequence>
+      <xsd:element name="RadiusMetres" type="HydrantRadiusMetresType"/>
+      <xsd:element name="NumberOfHydrants" type="xsd:integer"/>
+      <xsd:element name="Ownership" type="HydrantOwnershipType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="HydrantRadiusMetresType">
+    <xsd:restriction base="xsd:integer">
+      <xsd:enumeration value="150"/>
+      <xsd:enumeration value="300"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="HydrantOwnershipType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Public"/>
+      <xsd:enumeration value="Private"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponsePerilScore.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="PerilScoreProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="Perils" type="PerilScorePerilsType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PerilScorePerilsType">
+    <xsd:sequence>
+      <xsd:element name="Peril" type="PerilScorePerilType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="PerilScorePerilType">
+    <xsd:complexContent>
+      <xsd:extension base="BasePerilType">
+        <xsd:sequence>
+          <xsd:element name="FrequencyScore" type="xsd:integer" minOccurs="0"/>
+          <xsd:element name="SeverityScore" type="xsd:integer" minOccurs="0"/>
+          <xsd:element name="LossCostScore" type="xsd:integer" minOccurs="0"/>
+          <xsd:element name="PredictedFrequency" type="xsd:double" minOccurs="0"/>
+          <xsd:element name="PredictedSeverity" type="xsd:double" minOccurs="0"/>
+          <xsd:element name="PredictedLossCost" type="xsd:double" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseFloodScore.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSTypes.xsd"/>
+  <xsd:complexType name="FloodScoreProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="Perils" type="FloodScorePerilsType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FloodScorePerilsType">
+    <xsd:sequence>
+      <xsd:element name="Peril" type="FloodScorePerilType" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="FloodScorePerilType">
+    <xsd:complexContent>
+      <xsd:extension base="BasePerilType">
+        <xsd:sequence>
+          <xsd:element name="AverageAnnualLossValues" type="AverageAnnualLossValuesType"/>
+          <xsd:element name="FloodScore" type="xsd:integer"/>
+          <xsd:element name="PurePremium" type="xsd:double" minOccurs="0"/>
+          <xsd:element name="FloodMap" type="FloodMapType" minOccurs="0" maxOccurs="3"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AverageAnnualLossValuesType">
+    <xsd:sequence>
+      <xsd:element name="Building" type="xsd:float"/>
+      <xsd:element name="Contents" type="xsd:float"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="FloodMapType">
+    <xsd:sequence>
+      <xsd:element name="FloodEvent" type="FloodEventType"/>
+      <xsd:element name="Content" type="ContentType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="FloodEventType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="50"/>
+      <xsd:enumeration value="100"/>
+      <xsd:enumeration value="1000"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseInspectionScore.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:complexType name="InspectionScoreProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="Score" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponseInspectionAttributes.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">
+  <xsd:include schemaLocation="http://st1.optaintel.ca/OSSProxyCT/?xsd=OSSResponse.xsd"/>
+  <xsd:complexType name="InspectionAttributesProductType">
+    <xsd:complexContent>
+      <xsd:extension base="BaseProductType">
+        <xsd:sequence>
+          <xsd:element name="Score" type="InspectionAttributesScore" minOccurs="0" maxOccurs="12"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InspectionAttributesScore">
+    <xsd:sequence>
+      <xsd:element name="InspectionRecommendationType" type="InspectionRecommendationType"/>
+      <xsd:element name="Score" type="xsd:double"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="InspectionRecommendationType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="CentralHeating"/>
+      <xsd:enumeration value="Chimney"/>
+      <xsd:enumeration value="Electrical"/>
+      <xsd:enumeration value="FuelTank"/>
+      <xsd:enumeration value="InternalFireDamage"/>
+      <xsd:enumeration value="InternalWaterDamage"/>
+      <xsd:enumeration value="Liability"/>
+      <xsd:enumeration value="Plumbing"/>
+      <xsd:enumeration value="Roof"/>
+      <xsd:enumeration value="Stove"/>
+      <xsd:enumeration value="SumpSewer"/>
+      <xsd:enumeration value="WashingMachine"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://st1.optaintel.ca/OSSProxyCT</con:endpoint><con:endpoint>https://www.optaservice.com/OptaSingleService/ct_a</con:endpoint><con:endpoint>https://www.optaservice.com/OptaSingleService/ct_a</con:endpoint></con:endpoints><con:operation id="6796e4bf-38d4-4426-aca4-b80741de8559" isOneWay="false" action="" name="call" bindingOperationName="call" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="4281f2f9-289f-4ceb-b0be-e6db42c58277" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://st1.optaintel.ca/OSSProxyCT</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:ns="http://www.optaintel.ca/ws/OptaSingleService/1.0" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-295C7D772526DE386215066065140147">
+            <wsse:Username>oss.test@Aviva.com</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">secret123</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">we8LOdbCpyFVqFsiDj7/nA==</wsse:Nonce>
+            <wsu:Created>2017-09-28T13:48:34.014Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body>
+      <ns:OSSRequest>
+         <ns:RequestHeader>
+            <ns:RequestID>42</ns:RequestID>
+            <ns:RequestSentTimestamp>2017-07-13T14:33:00.123</ns:RequestSentTimestamp>
+            <ns:Requestor>
+               <ns:Carrier>Aviva</ns:Carrier>
+               <ns:Brokerage>ABC Brokerage</ns:Brokerage>
+               <ns:Username>Ford Prefect</ns:Username>
+            </ns:Requestor>
+         </ns:RequestHeader>
+         <ns:RequestBody>
+            <ns:Address>
+               <ns:AddressID>1</ns:AddressID>
+               <ns:StreetAddress>3202 Tania Cres</ns:StreetAddress>
+               <ns:Municipality>Burlington</ns:Municipality>
+               <ns:Province>ON</ns:Province>
+               <ns:PostalCode>L7M3M7</ns:PostalCode>
+            </ns:Address>
+            <ns:RequestedProducts>
+               <!--ns:Product>InspectionScore</ns:Product>
+ <ns:Product>InspectionAttributes</ns:Product>
+ <ns:Product>iClarifyResidential</ns:Product>
+ <ns:Product>FUS</ns:Product-->
+               <ns:Product>CommercialPerilScore</ns:Product>
+            </ns:RequestedProducts>
+         </ns:RequestBody>
+      </ns:OSSRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>oss.test@Aviva.com</con:username><con:password>secret123</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="357ca54e-3a73-4d0a-a047-ebf3f7359ed8" name="Req-SampleFromGuide" wssPasswordType="PasswordDigest"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://st1.optaintel.ca/OSSProxyCT</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">\r
+   <SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\r
+      <wsse:Security soap:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">\r
+         <wsse:UsernameToken wsu:Id="UsernameToken-aaa219be-f134-4619-be62-0fe9268f78a4">\r
+            <wsse:Username>oss.test@Aviva.com</wsse:Username>\r
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">HGDaevJ7X8GGyfLIqWqmgsO6q1M=</wsse:Password>\r
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">MdoAuzm2CgFaMJdO6NBkJg==</wsse:Nonce>\r
+            <wsu:Created>2017-10-12T08:11:29.056Z</wsu:Created>\r
+         </wsse:UsernameToken>\r
+      </wsse:Security>\r
+   </SOAP-ENV:Header>\r
+   <soap:Body>\r
+      <OSSRequest xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">\r
+         <RequestHeader>\r
+            <RequestID>dev.aviva.ca-96dd836c-9a54-4159-aedb-49b2a021ff4a</RequestID>\r
+            <RequestSentTimestamp>2017-10-12T04:11:29.052-04:00</RequestSentTimestamp>\r
+            <Requestor>\r
+               <Carrier>Aviva</Carrier>\r
+               <Brokerage>ABC Brokerage</Brokerage>\r
+               <Username>Ford Prefect</Username>\r
+            </Requestor>\r
+         </RequestHeader>\r    
+         <RequestBody>\r
+            <Address>\r
+               <AddressID>1</AddressID>\r
+               <StreetName>3202 Tania Cres</StreetName>\r
+               <Municipality>Burlington</Municipality>\r
+               <Province>ON</Province>\r
+               <PostalCode>L7M3M7</PostalCode>\r
+            </Address>\r
+            <RequestedProducts>\r
+               <Product>CommercialPerilScore</Product>\r
+            </RequestedProducts>\r
+         </RequestBody>\r
+      </OSSRequest>\r
+   </soap:Body>\r
+</soap:Envelope>]]></con:request><con:credentials><con:username>oss.test@Aviva.com</con:username><con:password>secret123</con:password><con:selectedAuthProfile>No Authorization</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="af140d4c-6da0-4d47-942d-0badaea983af" name="Request 3"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://st1.optaintel.ca/OSSProxyCT</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">\r
+   <soap:Body>\r
+      <OSSRequest xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">\r
+         <RequestHeader>\r
+            <RequestID>dev.aviva.ca-949266ba-58ad-44e4-a4de-610bf052e248</RequestID>\r
+            <RequestSentTimestamp>2017-10-05T02:52:56.930-04:00</RequestSentTimestamp>\r
+            <Requestor>\r
+               <Carrier>Aviva</Carrier>\r
+               <Brokerage>ABC Brokerage</Brokerage>\r
+               <Username>Ford Prefect</Username>\r
+            </Requestor>\r
+         </RequestHeader>\r
+         <RequestBody>\r
+            <Address>\r
+               <AddressID>1</AddressID>\r
+               <StreetName>L7M3M7</StreetName>\r
+               <Municipality>3202 Tania Cres</Municipality>\r
+               <Province>ON</Province>\r
+               <PostalCode>Burlington</PostalCode>\r
+            </Address>\r
+            <RequestedProducts>\r
+               <Product>CommercialPerilScore</Product>\r
+            </RequestedProducts>\r
+         </RequestBody>\r
+      </OSSRequest>\r
+   </soap:Body>\r
+</soap:Envelope>]]></con:request><con:credentials><con:password>secret123</con:password><con:selectedAuthProfile>Basic</con:selectedAuthProfile><con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes><con:preemptive>true</con:preemptive><con:authType>Preemptive</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="ca94d1c3-e15e-4313-a7a7-b8eb050881e4" name="Request 4"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkd0szbmFLTURrNzhBTWNqVFNPSnlqbDR5VlhpWmhZY2ZSby03QjF2Ny1vIn0.eyJqdGkiOiJlMjRkM2E3Zi1lM2RlLTQ4NDgtOGIzOC1lYzU3ZWMwNjI5ZmUiLCJleHAiOjE1MjIzNjkxNDEsIm5iZiI6MCwiaWF0IjoxNTIyMzMzMTQxLCJpc3MiOiJodHRwczovL2F1dGgub3B0YXNlcnZpY2UuY29tL2F1dGgvcmVhbG1zL29wdGEiLCJhdWQiOiJvcHRhX3NpbmdsZV9zZXJ2aWNlIiwic3ViIjoiMGI3YTJmZTEtZDBjMy00OGU4LWE2ZWEtY2I5OGNiMDg0NGFhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoib3B0YV9zaW5nbGVfc2VydmljZSIsImF1dGhfdGltZSI6MCwic2Vzc2lvbl9zdGF0ZSI6ImQ3YjY1NDU3LTg0YTYtNGIyMi1iYmY1LTQ1ODg4OGU2Yzg3YSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOltdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7Im9wdGFfc2luZ2xlX3NlcnZpY2UiOnsicm9sZXMiOltdfSwiT1NTLkNvbW1lcmNpYWxQZXJpbFNjb3JlIjp7InJvbGVzIjpbIkNvbW1lcmNpYWxQZXJpbFNjb3JlVjIiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiJBdml2YSBPU1MgQ29tbWVyY2lhbCBUZXN0aW5nIiwidXNlcl9hdHRyaWJ1dGVzIjp7IkltYWdlcnlQcm92aWRlciI6IkksRyIsIkdlb2NvZGVQcm92aWRlciI6IkksRyJ9LCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJvcHRhc2luZ2xlc2VydmljZS5jb21tLnRlc3RAYXZpdmEuY29tIiwiZ2l2ZW5fbmFtZSI6IkF2aXZhIiwiZmFtaWx5X25hbWUiOiJPU1MgQ29tbWVyY2lhbCBUZXN0aW5nIiwiZW1haWwiOiJvcHRhc2luZ2xlc2VydmljZS5jb21tLnRlc3RAYXZpdmEuY29tIn0.QXcghSPb7i-TcQiRWR_F97XrOPLFh3-D8113sz_Zg8fK8mCos7OI6aB-44UpoxqM0k-bAEsg1n30L5sQdIA18cw8xzHKLJLm3LCTmEpXbD7SOEhvZXg8fX9_0yofxhH-VnZVwTHUOjoXPMZDgSTCsKLZRcupb7jWaGha5xZ7xdPZPZ0EZqAIuDhi14bVASRKmcaAckywII2AbdoxphIdoWycunvb-AQSgmYSg-CD6MHTFyKWieHhRGe08yKX34Vx1Qi25J7Cd8qpCBGwGVtKwwX9TdoFgGKz40pW28uzUViV0kquN0auh8wyY0XlSQvdtxiIpW4JyWNn9gmfesyEpQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://www.optaservice.com/OptaSingleService/ct_a</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">\r
+   <soap:Body>\r
+      <OSSRequest xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">\r
+         <RequestHeader>\r
+            <RequestID>dev.aviva.ca-c89b6f35-3a33-4a45-80e3-3ee34b7d83d3</RequestID>\r
+            <RequestSentTimestamp>2018-03-28T02:00:56.043-04:00</RequestSentTimestamp>\r
+            <Requestor>\r
+               <Carrier>Aviva</Carrier>\r
+               <Brokerage>ABC Brokerage</Brokerage>\r
+               <Username>Ford Prefect</Username>\r
+            </Requestor>\r
+         </RequestHeader>\r
+         <RequestBody>\r
+            <Property>\r
+               <Address>\r
+                  <AddressID>1</AddressID>\r
+                  <StreetName>3202 Tania Cres</StreetName>\r
+                  <Municipality>Burlington</Municipality>\r
+                  <Province>BC</Province>\r
+                  <PostalCode>L7M3M7</PostalCode>\r
+               </Address>\r
+               <Business>\r
+                  <IndustryCodes>\r
+                     <SICCode>0139</SICCode>\r
+                     <IBCCode>0110</IBCCode>\r
+                     <NAICSCode>111910</NAICSCode>\r
+                  </IndustryCodes>\r
+                  <TotalRevenue>0.0</TotalRevenue>\r
+                  <EmployeeCount>0.0</EmployeeCount>\r
+               </Business>\r
+            </Property>\r
+            <RequestedProducts>\r
+               <Product>CommercialPerilScore</Product>\r
+            </RequestedProducts>\r
+         </RequestBody>\r
+      </OSSRequest>\r
+   </soap:Body>\r
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callRequest"/><con:wsrmConfig version="1.2"/></con:call><con:call id="038dcd64-968b-4f35-be79-3aaa1d1fd3da" name="Request 5"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://www.optaservice.com/OptaSingleService/CT</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">\r
+   <SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">\r
+      <wsse:Security soap:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">\r
+         <wsse:UsernameToken wsu:Id="UsernameToken-a5415c85-36ff-4113-861b-34ef7f97692c">\r
+            <wsse:Username>oss.test@Aviva.com</wsse:Username>\r
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">LagNPGgOaj2HB0IKrN8CSEOfLmM=</wsse:Password>\r
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">WDpJ5Dvd9z/4Z0WazM2eKw==</wsse:Nonce>\r
+            <wsu:Created>2018-03-26T12:33:33.539Z</wsu:Created>\r
+         </wsse:UsernameToken>\r
+      </wsse:Security>\r
+   </SOAP-ENV:Header>\r
+   <soap:Body>\r
+      <OSSRequest xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0">\r
+         <RequestHeader>\r
+            <RequestID>dev.aviva.ca-0a1dcc38-1ede-4a3a-b558-5b1c4b8c7c69</RequestID>\r
+            <RequestSentTimestamp>2018-03-26T08:33:33.477-04:00</RequestSentTimestamp>\r
+            <Requestor>\r
+               <Carrier>Aviva</Carrier>\r
+               <Brokerage>ABC Brokerage</Brokerage>\r
+               <Username>Ford Prefect</Username>\r
+            </Requestor>\r
+         </RequestHeader>\r
+         <RequestBody>\r
+            <Address>\r
+               <AddressID>1</AddressID>\r
+               <StreetName>3202 Tania Cres</StreetName>\r
+               <Municipality>Burlington</Municipality>\r
+               <Province>ON</Province>\r
+               <PostalCode>L7M3M7</PostalCode>\r
+               <IndustryCode>\r
+                  <IBCCode>0110</IBCCode>\r
+                  <NAICSCode>111910</NAICSCode>\r
+                  <SICCode>0139</SICCode>\r
+               </IndustryCode>\r
+            </Address>\r
+            <RequestedProducts>\r
+               <Product>CommercialPerilScore</Product>\r
+            </RequestedProducts>\r
+         </RequestBody>\r
+      </OSSRequest>\r
+   </soap:Body>\r
+</soap:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callRequest"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:mockService id="7b2fe9c4-d31a-4adb-9b58-fc3ff0967f61" port="8084" path="/mockOptaSingleServiceBinding" host="XDPYYZ0113" name="OptaSingleServiceBinding MockService" bindToHostOnly="false" docroot=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting></con:settings><con:properties/><con:mockOperation name="call" id="d01fcf4f-6e93-4dc4-bf34-62828e6803a7" interface="OptaSingleServiceBinding" operation="call"><con:settings/><con:defaultResponse>Response 1</con:defaultResponse><con:dispatchStyle>SCRIPT</con:dispatchStyle><con:dispatchPath>import com.eviware.soapui.impl.wsdl.WsdlInterface
+myInterface = (WsdlInterface) mockOperation.getMockService().getProject().getInterfaceByName("OptaSingleServiceBinding")
+myOperation = myInterface.getOperationByName("call")
+myRequest = myOperation.getRequestByName("Request 4")
+log.info("myRequest.... "+myRequest)
+myRequest.setRequestContent(mockRequest.getRequestContent())
+//myRequest.setRequestHeaders(mockRequest.getRequestHeaders())
+log.info("mockRequest.getRequestContent().... "+mockRequest.getRequestContent())
+log.info("context.... "+context)
+myRequest.submit(context,false)
+context.res = context.httpResponse.responseContent
+
+log.info("Response.... "+context.response)</con:dispatchPath><con:response name="Response 1" id="c4ed867d-be30-4d0e-9fdb-2e5421d103cd" httpResponseStatus="200" encoding="UTF-8"><con:settings/><con:responseContent>${res}</con:responseContent><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.optaintel.ca/ws/OptaSingleService/1.0/OptaSingleServicePort/callResponse"/></con:response><con:dispatchConfig/></con:mockOperation></con:mockService><con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:endpoint mode="OVERRIDE" wssType="PasswordText" username="oss.test@Aviva.com" password="secret123" outgoingWss="" domain="" wssTimeToLive="">http://st1.optaintel.ca/OSSProxyCT</con:endpoint></con:endpointStrategy><con:properties/><con:wssContainer><con:outgoing actor="" mustUnderstand="false"><con:name>OPTA-OSS</con:name><con:username>oss.test@Aviva.com</con:username><con:password>secret123</con:password><con:entry type="Username"><con:configuration><addCreated>true</addCreated><addNonce>true</addNonce><passwordType>PasswordDigest</passwordType></con:configuration></con:entry></con:outgoing></con:wssContainer><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

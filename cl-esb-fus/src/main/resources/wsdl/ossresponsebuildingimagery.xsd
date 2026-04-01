@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="BuildingImageryType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="Image" type="ResidentialImageType" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="ResidentialImageType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseImageType">
+                <xsd:sequence>
+                    <xsd:element name="ImageTypeCode" type="ResidentialImageryCode" minOccurs="0"/>
+                    <xsd:element name="ProviderCode" type="ResidentialImageryProvider" minOccurs="0"/>
+                    <xsd:element name="BestPhoto" type="xsd:boolean" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="ResidentialImageryCode">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Street"/>
+            <xsd:enumeration value="Satellite"/>
+            <xsd:enumeration value="StaticSatelliteHigh"/>
+            <xsd:enumeration value="StaticSatelliteLow"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ResidentialImageryProvider">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ILookAbout"/>
+            <xsd:enumeration value="Google"/>
+            <xsd:enumeration value="WIES"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

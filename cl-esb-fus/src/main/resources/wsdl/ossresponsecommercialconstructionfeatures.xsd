@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+    <xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=osstypes.xsd"/>
+
+    <xsd:complexType name="iClarifyCommercialConstructionFeaturesProductType">
+        <xsd:complexContent>
+            <xsd:extension base="BaseProductType">
+                <xsd:sequence>
+                    <xsd:element name="PropertyClass" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="PropertyDescription" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="RecordDate" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="PropertyAge" type="PropertyAgeType" minOccurs="0"/>
+                    <xsd:element name="PropertyDimensions" type="PropertyDimensionsType" minOccurs="0"/>
+                    <xsd:element name="PropertyConstruction" type="PropertyConstructionType" minOccurs="0"/>
+                    <xsd:element name="PropertyExposures" type="PropertyExposuresType" minOccurs="0"/>
+                    <xsd:element name="PropertyProtection" type="PropertyProtectionType" minOccurs="0"/>
+                    <xsd:element name="PropertyParking" type="PropertyParkingType" minOccurs="0"/>
+                    <xsd:element name="Structures" type="StructuresType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyAgeType">
+        <xsd:sequence>
+            <xsd:element name="YearBuilt" type="xsd:integer"/>
+            <xsd:element name="YearBuiltType" type="xsd:string"/>
+            <xsd:element name="EffectiveYear" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="AdditionYears" type="xsd:string"/>
+            <xsd:element name="RenovationYears" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyDimensionsType">
+        <xsd:sequence>
+            <xsd:element name="PropertyArea" type="PropertyAreaType" minOccurs="0"/>
+            <xsd:element name="PropertyHeight" type="PropertyHeightType" minOccurs="0"/>
+            <xsd:element name="Basement" type="BasementType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyAreaType">
+        <xsd:sequence>
+            <xsd:element name="TotalFloorAreaType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="TotalFloorAreaMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="TotalFloorAreaImperial" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="SiteAreaMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="SiteAreaImperial" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="GradeAreaMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="GradeAreaImperial" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="EffectiveAreaMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="EffectiveAreaImperial" type="xsd:float" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyHeightType">
+        <xsd:sequence>
+            <xsd:element name="NumberOfStoreys" type="xsd:float"/>
+            <xsd:element name="StoreyHeightMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="StoreyHeightImperial" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="BuildingHeightMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="BuildingHeightImperial" type="xsd:float" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="BasementType">
+        <xsd:sequence>
+            <xsd:element name="BasementPresent" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="BasementAreaMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="BasementAreaImperial" type="xsd:float" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyConstructionType">
+        <xsd:sequence>
+            <xsd:element name="ConstructionClass" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="CombustibilityClass" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="RoofDetails" type="RoofDetailsType" minOccurs="0"/>
+            <xsd:element name="ExteriorWalls" type="ExteriorWallsType" minOccurs="0"/>
+            <xsd:element name="HeatingTypes" type="HeatingTypes" minOccurs="0"/>
+            <xsd:element name="PlumbingTypes" type="PlumbingTypes" minOccurs="0"/>
+            <xsd:element name="ElectricalTypes" type="ElectricalTypes" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RoofDetailsType">
+        <xsd:sequence>
+            <xsd:element name="RoofType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="RoofSurface" type="xsd:string" minOccurs="0" />
+            <xsd:element name="RoofConstruction" type="RoofConstructionType" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="RoofConstructionType">
+        <xsd:sequence>
+            <xsd:element name="RoofDeck" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="RoofDeckPercentage" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ExteriorWallsType">
+        <xsd:sequence>
+            <xsd:element name="ExteriorWallType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ExteriorWallTypePercentage" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="HeatingTypes">
+        <xsd:sequence>
+            <xsd:element name="HeatingType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="FuelType" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PlumbingTypes">
+        <xsd:sequence>
+            <xsd:element name="PlumbingType" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ElectricalTypes">
+        <xsd:sequence>
+            <xsd:element name="ElectricalWiring" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ElectricalCovering" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ElectricalPanel" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+     <xsd:complexType name="PropertyExposuresType">
+        <xsd:sequence>
+            <xsd:element name="Exposure" type="ExposureType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ExposureType">
+        <xsd:sequence>
+            <xsd:element name="ExposureDirection" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ExposureDescription" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyProtectionType">
+        <xsd:sequence>
+            <xsd:element name="FireAlarm" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="BurglarAlarm" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="Fencing" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="SprinklerProtection" type="SprinklerProtectionType" minOccurs="0"/>
+            <xsd:element name="FireProofing" type="FireProofingType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="SprinklerProtectionType">
+        <xsd:sequence>
+            <xsd:element name="SprinklerProtected_YN" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="SprinklerProtectedPercentage" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="MostRecentMaintenance" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="FireProofingType">
+        <xsd:sequence>
+            <xsd:element name="Cemetitious" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="SprayedFibre" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="PropertyParkingType">
+        <xsd:sequence>
+            <xsd:element name="ParkingType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ParkingCapacity" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="StructuresType">
+        <xsd:sequence>
+            <xsd:element name="Structure" type="StructureType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="StructureType">
+        <xsd:sequence>
+            <xsd:element name="StructureIdentifier" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="UnitLocation" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="StructureDescription" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="StructureParkName" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="StructureUse" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="RiskCondition" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="ConstructureClass" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="StructureAge" type="StructureAgeType" minOccurs="0"/>
+            <xsd:element name="StructureDimensions" type="StructureDimensionType" minOccurs="0"/>
+            <xsd:element name="AreaDetails" type="AreaDetailsType" minOccurs="0"/>
+            <xsd:element name="SuiteMix" type="SuiteMixType" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="StructureAgeType">
+        <xsd:sequence>
+            <xsd:element name="YearBuilt" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="EffectiveYearBuilt" type="xsd:integer" minOccurs="0"/>
+            <xsd:element name="RenovationYear" type="xsd:integer" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="StructureDimensionType">
+        <xsd:sequence>
+            <xsd:element name="NumberOfStoreys" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="StoreyHeightMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="StoreyHeightImperial" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="PerimeterMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="PerimeterImperial" type="xsd:float" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="AreaDetailsType">
+        <xsd:sequence>
+            <xsd:element name="AreaType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="FloorLevel" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="AreaEstimated" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="TotalAreaMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="TotalAreaImperial" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="MezzanineHeightMetric" type="xsd:float" minOccurs="0"/>
+            <xsd:element name="MezzanineHeightImperial" type="xsd:float" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="SuiteMixType">
+        <xsd:sequence>
+            <xsd:element name="SuiteType" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="SuiteTypeCount" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

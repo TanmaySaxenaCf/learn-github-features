@@ -1,0 +1,14 @@
+[{
+	"optaOssACL": {
+		"userInfo": [{
+			"userName": "catalyst_esb_user",
+			"allowedProvinces": ["ON", "BC"]
+		}, {
+			"userName": "searchcustmersvc_esb_user",
+			"allowedProvinces": ["ON"]
+		}, {
+			"userName": "rtg_esb_user",
+			"allowedProvinces": ["ON", "BC"]
+		}]
+	}
+}]

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+
+	<xsd:complexType name="InspectionScoreProductType">
+		<xsd:complexContent>
+			<xsd:extension base="BaseProductType">
+				<xsd:sequence>
+					<xsd:element name="Score" type="xsd:integer" minOccurs="0"/>
+                    <xsd:element name="NationalScore" type="xsd:integer" minOccurs="0"/>
+                    <xsd:element name="ProvincialScore" type="xsd:integer" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+</xsd:schema>

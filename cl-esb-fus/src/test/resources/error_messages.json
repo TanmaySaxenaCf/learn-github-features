@@ -1,0 +1,33 @@
+[
+{
+"errorCode":"FS1001",
+"errorDesc":"Street Address field is blank",
+"errorDesc_fr":""
+},
+{
+"errorCode":"FS1002",
+"errorDesc":"Postal Code field is blank",
+"errorDesc_fr":""
+},
+{
+"errorCode":"FS1003",
+"errorDesc":"Municipality field is blank",
+"errorDesc_fr":""
+},
+{
+"errorCode":"FS1004",
+"errorDesc":"Province field is blank",
+"errorDesc_fr":""
+},
+{
+"errorCode":"FS1005",
+"errorDesc":"Provided Province is not authorized to view operation.",
+"errorDesc_fr":""
+}
+{
+"errorCode":"FS2001",
+"errorDesc":"Technical Error Occurred. Please contact Technical Team.",
+"errorDesc_fr":""
+}
+]
+

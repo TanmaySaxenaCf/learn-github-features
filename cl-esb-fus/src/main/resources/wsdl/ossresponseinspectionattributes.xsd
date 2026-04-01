@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            targetNamespace="http://www.optaintel.ca/ws/OptaSingleService/1.0"
+            elementFormDefault="qualified">
+
+	<xsd:include schemaLocation="http://www.optaservice.com/OptaSingleService/test?xsd=ossresponse.xsd"/>
+
+	<xsd:complexType name="InspectionAttributesProductType">
+		<xsd:complexContent>
+			<xsd:extension base="BaseProductType">
+				<xsd:sequence>
+					<xsd:element name="Score" type="InspectionAttributesScore" minOccurs="0" maxOccurs="15"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="InspectionAttributesScore">
+		<xsd:sequence>
+			<xsd:element name="InspectionRecommendationType" type="InspectionRecommendationType"/>
+            <xsd:element name="Score" type="xsd:double" minOccurs="0"/>
+			<xsd:element name="NationalScore" type="xsd:double" minOccurs="0"/>
+			<xsd:element name="ProvincialScore" type="xsd:double" minOccurs="0"/>
+            <xsd:element name="PredictedLossCost" type="xsd:double" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="InspectionRecommendationType">
+		<xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CentralHeating"/>
+			<xsd:enumeration value="Chimney"/>
+			<xsd:enumeration value="Electrical"/>
+			<xsd:enumeration value="ExternalWaterDegradation"/>
+			<xsd:enumeration value="FuelTank"/>
+			<xsd:enumeration value="FloorPad"/>
+			<xsd:enumeration value="InternalFireDamage"/>
+			<xsd:enumeration value="InternalWaterDamage"/>
+			<xsd:enumeration value="Liability"/>
+			<xsd:enumeration value="Plumbing"/>
+			<xsd:enumeration value="Plumbing"/>
+			<xsd:enumeration value="Roof"/>
+			<xsd:enumeration value="SewerBackup"/>
+			<xsd:enumeration value="Stove"/>
+			<xsd:enumeration value="SumpPump"/>
+			<xsd:enumeration value="SumpSewer"/>
+			<xsd:enumeration value="WashingMachine"/>
+			<xsd:enumeration value="WaterHeater"/>
+			<xsd:enumeration value="WaterTank"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+</xsd:schema>

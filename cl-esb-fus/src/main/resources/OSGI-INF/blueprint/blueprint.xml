@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:camel="https://camel.apache.org/schema/blueprint"
+	xmlns:camel-cxf="http://camel.apache.org/schema/blueprint/cxf"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+	xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+	xmlns:enc="http://karaf.apache.org/xmlns/jasypt/v1.0.0"
+	xmlns:prop="http://camel.apache.org/schema/placeholder" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://camel.apache.org/schema/placeholder http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd        https://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd        http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd        http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd      http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd            http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">	
+	<ext:property-placeholder>
+		<ext:location>
+			file:/app/opdata/properties/catalyst/fus/config/app_config.properties
+		</ext:location>
+	</ext:property-placeholder>
+	<enc:property-placeholder>
+		<enc:encryptor class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+			<property name="config">
+				<bean class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+					<property name="algorithm">
+                        <bean class="com.aviva.ca.vault.service.VaultService" factory-method="getKeyValue">
+                            <argument value="Algorithm"/>
+                        </bean>
+                    </property>
+                    <property name="password">
+                        <bean class="com.aviva.ca.vault.service.VaultService" factory-method="getKeyValue">
+                            <argument value="AllyMasterKey"/>
+                        </bean>
+                    </property>
+				</bean>
+			</property>
+		</enc:encryptor>
+	</enc:property-placeholder>
+	<camel-cxf:rsServer address="/pl/api/oss/rest/product" id="service"	loggingFeatureEnabled="true">
+		<camel-cxf:serviceBeans>
+			<bean class="com.aviva.ca.esb.cl.opta.fus.service.OssFusSvc" />
+		</camel-cxf:serviceBeans>
+		<camel-cxf:providers>
+			<ref component-id="authenticationFilter" />
+		</camel-cxf:providers>
+		<camel-cxf:inInterceptors>
+			<ref component-id="authorizationInterceptor" />
+		</camel-cxf:inInterceptors>
+	</camel-cxf:rsServer>
+	<camel-cxf:cxfEndpoint address="/pl/api/oss/fus" id="soapService" serviceClass="com.aviva.ca.esb.cl.opta.fus.service.FusSvc">
+		<camel-cxf:features>
+			<ref component-id="cxfLoggerFeature" />
+		</camel-cxf:features>
+		<camel-cxf:inInterceptors>
+		<ref component-id="soapAuthenticationInterceptor" />
+		<ref component-id="WSSECAuthenticate" />
+		<ref component-id="authorizationInterceptor" />
+		</camel-cxf:inInterceptors>
+		<camel-cxf:properties>
+			<entry key="mtom-enabled" value="false" />
+			<entry key="ws-security.ut.no-callbacks" value="true" />
+			<entry key="ws-security.validate.token" value="false" />
+		</camel-cxf:properties>
+	</camel-cxf:cxfEndpoint>
+	<camel-cxf:cxfEndpoint address="/pl/api/oss/product/fus" id="soapFullResponseService" serviceClass="com.aviva.ca.esb.cl.opta.fus.service.FusProductSvc">
+		<camel-cxf:features>
+			<ref component-id="cxfLoggerFeature" />
+		</camel-cxf:features>
+		<camel-cxf:inInterceptors>
+		<ref component-id="soapAuthenticationInterceptor" />
+		<ref component-id="WSSECAuthenticate" />
+		<ref component-id="authorizationInterceptor" />
+		</camel-cxf:inInterceptors>
+		<camel-cxf:properties>
+			<entry key="mtom-enabled" value="false" />
+			<entry key="ws-security.ut.no-callbacks" value="true" />
+			<entry key="ws-security.validate.token" value="false" />
+		</camel-cxf:properties>
+	</camel-cxf:cxfEndpoint>
+		<bean class="org.apache.cxf.jaxrs.security.JAASAuthenticationFilter"
+		id="authenticationFilter">
+		<property name="contextName" value="${LDAP_LOGIN}" />
+	</bean>
+	<bean class="com.aviva.ca.esb.common.cxf.logger.CXFLoggerFeature" id="cxfLoggerFeature"/>
+	<bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor" id="WSSECAuthenticate">
+        <property name="properties">
+            <map>
+                <entry key="action" value="UsernameToken"/>
+                <entry key="passwordType" value="PasswordText"/>
+            </map>
+        </property>
+    </bean>
+	<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusAuthRequestProcessor"
+		id="fusAuthProcessorRq" >
+		<property name="reqid" value="${FUS_REQUESTID_PREFIX}" />
+		<property name="broker" value="${FUS_DEFAULT_BROKERAGE}" />
+		<property name="carrier" value="${FUS_DEFAULT_CARRIER}" />
+		<property name="user" value="${FUS_DEFAULT_USERNAME}" />
+	</bean>
+	<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusFullResAuthRequestProcessor"
+		id="fullresponseFusAuthProcessorRq" >
+		<property name="reqid" value="${FUS_REQUESTID_PREFIX}" />
+		<property name="broker" value="${FUS_DEFAULT_BROKERAGE}" />
+		<property name="carrier" value="${FUS_DEFAULT_CARRIER}" />
+		<property name="user" value="${FUS_DEFAULT_USERNAME}" />
+	</bean>
+	<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusRequestPreProcessor"
+		id="fusProcessorValidateRq"/>
+		<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusFullResRequestPreProcessor"
+		id="fullresponseFusProcessorValidateRq"/>
+		<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusAuthServiceResponseProcessor"
+		id="fusAuthProcessorRs" />
+		<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusFullResAuthServiceResponseProcessor"
+		id="fullresponseFusAuthProcessorRs" />
+	<bean class="com.aviva.ca.esb.cl.opta.fus.processor.ErrorProcessor"
+		id="fusProcessorFault" />
+	<bean
+		class="com.aviva.ca.esb.cl.opta.fus.processor.FusAuthorizationProcessor"
+		id="authorizationProcessor">
+		<property name="provinceIds" value="${SUPPORTED_PROVINCE_LIST}" />
+	</bean>
+
+	<bean
+		class="com.aviva.ca.esb.cl.opta.fus.processor.FusFullResAuthorizationProcessor"
+		id="fullresponseAuthorizationProcessor">
+		<property name="provinceIds" value="${SUPPORTED_PROVINCE_LIST}" />
+	</bean>
+		
+	<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusAuthServiceResponse" id="authResponseProcessor"/>
+	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"	id="jsondataprovider" />
+	<bean class="com.aviva.ca.esb.cl.opta.fus.processor.FusAuthServiceProcessor" id="authServiceProcessor">
+			<property name="authToken" value="${FUS_AUTH_TOKEN}" />
+			<property name="grantType" value="${FUS_GRANT_TYPE}" />
+			<property name="clientSecret" value="${FUS_CLIENT_SECRET}" />
+			<property name="clientId" value="${FUS_CLIENT_ID}" />
+	</bean>
+	<bean
+        class="org.apache.cxf.interceptor.security.JAASLoginInterceptor" id="soapAuthenticationInterceptor">
+        <property name="contextName" value="${LDAP_LOGIN}"/>
+        <property name="roleClassifier" value="RolePrincipal"/>
+        <property name="roleClassifierType" value="classname"/>
+    </bean>
+	<bean
+		class="org.apache.cxf.interceptor.security.SimpleAuthorizingInterceptor"
+		id="authorizationInterceptor">
+		<property name="methodRolesMap">
+			<map>
+				<entry key="getFusScore" value="eEsbPlApiOptaAccess" />
+
+			</map>
+		</property>
+	</bean>
+	<camel-cxf:cxfEndpoint address="${FUS_WITHAUTH_ENDPOINT_URL}"
+		id="fusAuthEndpoint" loggingFeatureEnabled="true"
+		serviceClass="ca.optaintel.ws.optasingleservice._2_0.OptaSingleServicePort">
+		<camel-cxf:properties>
+			<entry key="dataFormat" value="POJO" />
+		</camel-cxf:properties>		
+	</camel-cxf:cxfEndpoint>
+	<camel-cxf:rsClient address="${FUS_AUTH_ENDPOINT_URL}"
+		id="getAuthToken" loggingFeatureEnabled="true">		
+		<camel-cxf:providers>
+			<ref component-id="jsondataprovider" />
+		</camel-cxf:providers>
+	</camel-cxf:rsClient>
+	<conduit name=".*"
+		xmlns="http://cxf.apache.org/transports/http/configuration" xmlns:sec="http://cxf.apache.org/configuration/security">
+		<client AutoRedirect="true" Connection="Keep-Alive"
+			ConnectionTimeout="${FUS_CONNECTION_TIMEOUT}" ReceiveTimeout="${FUS_RECEIVE_TIMEOUT}" />
+		<tlsClientParameters disableCNCheck="true">
+			<sec:trustManagers>
+				<sec:keyStore type="JKS" password="${FUS_TRUST_PWD}"
+					file="${FUS_TRUST_STOREPATH}" />
+			</sec:trustManagers>
+			<sec:keyManagers keyPassword="${FUS_TRUST_PWD}">
+				<sec:keyStore type="JKS" password="${FUS_TRUST_PWD}"
+					file="${FUS_TRUST_STOREPATH}" />
+			</sec:keyManagers>
+		</tlsClientParameters>
+	</conduit>
+	<camelContext id="_ossRouter"
+		xmlns="http://camel.apache.org/schema/blueprint">
+		<dataFormats>
+            <json disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"
+                id="jsonToErrorMessageLookup" library="Jackson"
+                unmarshalTypeName="com.aviva.ca.esb.cl.opta.fus.json.model.ErrorMessageLookup" useList="true"/>
+                <json disableFeatures="FAIL_ON_UNKNOWN_PROPERTIES"
+                id="jsonToAuthenticationLookup" library="Jackson"
+                unmarshalTypeName="com.aviva.ca.esb.cl.opta.fus.json.model.AuthorizationLookup" useList="true"/>
+        </dataFormats>
+        <route id="jsonToErrorMessageLookup">
+            <from id="_from_1" uri="file://{{ERROR_MSG_LOOKUP}}"/>
+            <log id="_log_from_jsonToErrorMessageLookup" message="File Opened--> ${body}"/>
+            <unmarshal id="_marshal_errorjson_toPojo" ref="jsonToErrorMessageLookup"/>
+            <log id="_log__marshal_errorjson_toPojo" message="Marshelling Done"/>
+            <bean
+                beanType="com.aviva.ca.esb.cl.opta.fus.json.cache.DataCacheLoader"
+                id="_bean_1" method="loadJsonData"/>
+            <log id="_log__errorloadJson" message="Json Data load Done"/>
+        </route>
+        <route id="jsonToAuthenticationLookup">
+            <from id="_from22" uri="file://{{AUTHORIZATION_LOOKUP}}"/>
+            <log id="_log_from_jsonToAuthenticationLookup" message="File Opened--> ${body}"/>
+            <unmarshal id="_marshal_authjson_toPojo" ref="jsonToAuthenticationLookup"/>
+            <log id="_log__marshal_authjson_toPojo" message="Marshelling Done"/>
+            <bean
+                beanType="com.aviva.ca.esb.cl.opta.fus.json.cache.DataCacheLoader"
+                id="_bean77" method="loadJsonData"/>
+            <log id="_log__loadJson77" message="Json Data load Done"/>
+        </route>
+        
+		<route id="in_rest_fusRouter" rest="true">
+			<from id="_from_fus_rest"
+				uri="cxfrs:bean:service?bindingStyle=SimpleConsumer&amp;loggingFeatureEnabled=true" />
+			<log id="_log_from_fus_rest" message="Rest message accepted" />
+			<process id="authenticate_fus_request" ref="fullresponseAuthorizationProcessor" />
+			<log id="_log_process_fus_authenticate" message="Authentication Success" />
+			<process id="validate_fus_request" ref="fullresponseFusProcessorValidateRq" />
+			<log id="_log_process_fus_validate" message="Validation Success" />
+			<to id="_direct_auth_service" uri="direct:securityToken"/>
+			<log id="_log_process_auth_fus_response" message="AuthResponseReceived" />
+			<process id="process_auth_fus_request" ref="fullresponseFusAuthProcessorRq" />
+			<to id="_auth_to_external_fus_soap" uri="cxf:bean:fusAuthEndpoint" />
+			<process id="auth_process_fus_response" ref="fullresponseFusAuthProcessorRs" />
+			<marshal id="_auth_marshal_pojo_2_json">
+					<json id="_auth_soap_msg_2_json_direct" library="Jackson" unmarshalTypeName="com.aviva.ca.esb.cl.opta.fus.model.FusProductResponse" />
+			</marshal>
+			<convertBodyTo type="String"/>
+            <setProperty propertyName="STATUS">
+                <simple>success</simple>
+            </setProperty>
+             <setProperty propertyName="RES_PAYLOAD">
+                <simple>${body}</simple>
+            </setProperty>
+             <wireTap uri="direct-vm:fusLogger"/>
+				<onException id="_onException">
+				<!-- type of exception to be handled by this onException element -->
+				<exception>java.lang.Exception</exception>
+				<!-- handle strategy is to continue - in this case convert soapFault 
+					to REST error -->
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<!-- Processor to do soap fault to rest error mapping -->
+				<process id="process_faults" ref="fusProcessorFault" />
+				<wireTap uri="direct-vm:fusLogger"/>
+			</onException>
+		</route>		
+		<route id="route_oss_security_token">
+			<from id="_from_direct_security_token" uri="direct:securityToken" />
+			<log id="_log_from_direct_security_token" message="Security token route started" />
+			<process id="process_token_rq" ref="authServiceProcessor" />
+			<to id="_to_external_security" uri="cxfrs:bean:getAuthToken" />
+			<log id="_security_log" message="Security token route ended" />
+			<process id="process_token_rs" ref="authResponseProcessor"/>
+			<onException id="_onException">
+				<!-- type of exception to be handled by this onException element -->
+				<exception>java.lang.Exception</exception>
+				<!-- handle strategy is to continue - in this case convert soapFault 
+					to REST error -->
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<!-- Processor to do soap fault to rest error mapping -->
+				<process id="process_faults" ref="fusProcessorFault"/>
+                <wireTap uri="direct-vm:fusLogger"/>
+             	<choice>
+				<when>
+					<simple>${property.CALL_TYPE}	== 'SOAP'</simple>
+					<bean id="method1" method="returnSoapResponse" ref="fusProcessorFault" />
+				</when>
+				</choice>
+			</onException>
+		</route>	
+			<route id="in_soap_fusRouter">
+			<from id="_from_fus_soap"
+				uri="cxf:bean:soapService" />
+			<log id="_log_from_fus_soap" message="SOAP message accepted" />
+			<setProperty id="setResponseType" propertyName="CALL_TYPE">
+						<simple>SOAP</simple>
+			</setProperty>
+			<process id="soap_authenticate_fus_request" ref="authorizationProcessor" />
+			<log id="soap__log_process_fus_authenticate" message="Authentication Success" />
+			<process id="soap_validate_fus_request" ref="fusProcessorValidateRq" />
+			<log id="soap__log_process_fus_validate" message="Validation Success" />
+			<to id="soap__direct_auth_service" uri="direct:securityToken"/>
+			<log id="soap__log_process_auth_fus_response" message="AuthResponseReceived" />
+			<process id="soap_process_auth_fus_request" ref="fusAuthProcessorRq" />
+			<to id="soap__auth_to_external_fus_soap" uri="cxf:bean:fusAuthEndpoint" />
+			<process id="soap_auth_process_fus_response" ref="fusAuthProcessorRs" />
+ 			<wireTap uri="direct-vm:fusLogger"/>
+			<onException id="_onException">
+				<!-- type of exception to be handled by this onException element -->
+				<exception>java.lang.Exception</exception>
+				<!-- handle strategy is to continue - in this case convert soapFault 
+					to REST error -->
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<!-- Processor to do soap fault to rest error mapping -->
+				<process id="process_faults" ref="fusProcessorFault" />
+                <wireTap uri="direct-vm:fusLogger"/>
+ 			 <bean id="method2" method="returnSoapResponse" ref="fusProcessorFault" />
+			</onException>
+		</route>		
+			<route id="in_soap_fus_fullResponse_Router">
+			<from id="_from_fus__fullResponse_soap"
+				uri="cxf:bean:soapFullResponseService" />
+			<log id="_log_from_fus__fullResponse_soap" message="SOAP message accepted" />
+			<setProperty id="setFullResponseType" propertyName="CALL_TYPE">
+						<simple>SOAP</simple>
+			</setProperty>
+			<process id="soap_authenticate_fus_fullResponse__request" ref="fullresponseAuthorizationProcessor" />
+			<log id="soap__log_process_fus_fullResponse_authenticate" message="Authentication Success" />
+			<process id="soap_validate_fus_fullResponse_request" ref="fullresponseFusProcessorValidateRq" />
+			<log id="soap__log_process_fus_fullResponse__validate" message="Validation Success" />
+			<to id="soap__direct_auth_fullResponse__service" uri="direct:securityToken"/>
+			<log id="soap__log_process__fullResponse_auth_fus_response" message="AuthResponseReceived" />
+			<process id="soap_process_fullResponse__auth_fus_request" ref="fullresponseFusAuthProcessorRq" />
+			<to id="soap__auth_to_fullResponse_external_fus_soap" uri="cxf:bean:fusAuthEndpoint" />
+			<process id="soap_auth_process_fus_fullResponse_response" ref="fullresponseFusAuthProcessorRs" />
+				<setProperty propertyName="STATUS">
+                <simple>success</simple>
+            </setProperty>
+             <setProperty propertyName="RES_PAYLOAD">
+                <simple>${body}</simple>
+            </setProperty>
+             <wireTap uri="direct-vm:fusLogger"/>
+			<onException id="_onException">
+				<!-- type of exception to be handled by this onException element -->
+				<exception>java.lang.Exception</exception>
+				<!-- handle strategy is to continue - in this case convert soapFault 
+					to REST error -->
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<!-- Processor to do soap fault to rest error mapping -->
+				<process id="process_faults" ref="fusProcessorFault" />
+				<wireTap uri="direct-vm:fusLogger"/>
+                <bean id="method4" method="returnSoapResponse" ref="fusProcessorFault" />
+			</onException>
+		</route>		
+		
+	</camelContext>
+</blueprint>
